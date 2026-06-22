@@ -4,9 +4,9 @@ import {
 	NotFoundException
 } from '@nestjs/common'
 
-import { TokenType } from '../../generated/prisma/enums'
-import { MailService } from '../../libs/mail/mail.service'
-import { PrismaService } from '../../prisma/prisma.service'
+import { TokenType } from '@/generated/prisma/client'
+import { MailService } from '@/libs/mail/mail.service'
+import { PrismaService } from '@/prisma/prisma.service'
 
 @Injectable()
 export class TwoFactorAuthService {
@@ -89,7 +89,7 @@ export class TwoFactorAuthService {
 			})
 		}
 
-		const twoFactorToken = await this.prismaService.token.create({
+		return this.prismaService.token.create({
 			data: {
 				email,
 				token,
@@ -97,7 +97,5 @@ export class TwoFactorAuthService {
 				type: TokenType.TWO_FACTOR
 			}
 		})
-
-		return twoFactorToken
 	}
 }

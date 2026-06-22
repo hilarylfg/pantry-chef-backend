@@ -9,10 +9,10 @@ import { ConfigService } from '@nestjs/config'
 import { verify } from 'argon2'
 import { Request, Response } from 'express'
 
-import { PrismaClient, User } from '../generated/prisma/client'
-import { AuthMethod } from '../generated/prisma/enums'
-import { PrismaService } from '../prisma/prisma.service'
-import { UserService } from '../user/user.service'
+import { PrismaClient, User } from '@/generated/prisma/client'
+import { AuthMethod } from '@/generated/prisma/enums'
+import { PrismaService } from '@/prisma/prisma.service'
+import { UserService } from '@/user/user.service'
 
 import { LoginDto } from './dto/login.dto'
 import { RegisterDto } from './dto/register.dto'
@@ -148,6 +148,7 @@ export class AuthService {
 			'',
 			profile.name,
 			profile.picture,
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 			AuthMethod[profile.provider.toUpperCase()],
 			true
 		)

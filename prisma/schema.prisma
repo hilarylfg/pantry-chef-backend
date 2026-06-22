@@ -26,8 +26,10 @@ model User {
 
   accounts Account[]
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  products  Product[]
+  recipes   Recipe[]
 
   @@map("users")
 }
@@ -51,6 +53,42 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
+}
+
+model Token {
+  id String @id @default(uuid())
+
+  email     String
+  token     String    @unique
+  type      TokenType
+  expiresIn DateTime  @map("expires_in")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("tokens")
+}
+
+model Product {
+  id         String    @id @default(uuid())
+  name       String
+  category   String
+  amount     Float
+  unit       String
+  expiryDate DateTime?
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+}
+
+model Recipe {
+  id          String   @id @default(uuid())
+  title       String
+  ingredients Json
+  steps       Json
+  isFavorite  Boolean  @default(false)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }
 
 enum UserRole {

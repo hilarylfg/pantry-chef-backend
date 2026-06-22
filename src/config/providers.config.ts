@@ -1,9 +1,9 @@
 import { ConfigService } from '@nestjs/config'
 
-import { TypeOptions } from '../auth/provider/provider.constants'
-import { GithubProvider } from '../auth/provider/services/github.provider'
-import { GoogleProvider } from '../auth/provider/services/google.provider'
-import { YandexProvider } from '../auth/provider/services/yandex.provider'
+import { TypeOptions } from '@/auth/provider/provider.constants'
+import { GithubProvider } from '@/auth/provider/services/github.provider'
+import { GoogleProvider } from '@/auth/provider/services/google.provider'
+import { YandexProvider } from '@/auth/provider/services/yandex.provider'
 
 export const getProvidersConfig = (
 	configService: ConfigService

@@ -5,13 +5,14 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import { TokenType } from '@prisma/client'
 import { Request } from 'express'
 import { v4 as uuidv4 } from 'uuid'
 
-import { MailService } from '../../libs/mail/mail.service'
-import { PrismaService } from '../../prisma/prisma.service'
-import { UserService } from '../../user/user.service'
+import { TokenType } from '@/generated/prisma/client'
+import { MailService } from '@/libs/mail/mail.service'
+import { PrismaService } from '@/prisma/prisma.service'
+import { UserService } from '@/user/user.service'
+
 import { AuthService } from '../auth.service'
 
 import { ConfirmationDto } from './dto/confirmation.dto'
@@ -111,7 +112,7 @@ export class EmailConfirmationService {
 			})
 		}
 
-		const verificationToken = await this.prismaService.token.create({
+		return this.prismaService.token.create({
 			data: {
 				email,
 				token,
@@ -119,7 +120,5 @@ export class EmailConfirmationService {
 				type: TokenType.VERIFICATION
 			}
 		})
-
-		return verificationToken
 	}
 }

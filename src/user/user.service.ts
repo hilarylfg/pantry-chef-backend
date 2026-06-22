@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { AuthMethod, PrismaClient, User } from '@prisma/client'
 import { hash } from 'argon2'
 
-import { PrismaService } from '../prisma/prisma.service'
+import { AuthMethod, PrismaClient, User } from '@/generated/prisma/client'
+import { PrismaService } from '@/prisma/prisma.service'
 
 import { UpdateUserDto } from './dto/update-user.dto'
 
@@ -30,7 +30,7 @@ export class UserService {
 	}
 
 	public async findByEmail(email: string): Promise<User | null> {
-		const user = await this.prismaService.user.findUnique({
+		return this.prismaService.user.findUnique({
 			where: {
 				email
 			},
@@ -38,8 +38,6 @@ export class UserService {
 				accounts: true
 			}
 		})
-
-		return user
 	}
 
 	public async create(
@@ -50,7 +48,7 @@ export class UserService {
 		method: AuthMethod,
 		isVerified: boolean
 	): Promise<User> {
-		const user = await this.prismaService.user.create({
+		return this.prismaService.user.create({
 			data: {
 				email,
 				password: password ? await hash(password) : '',
@@ -63,8 +61,6 @@ export class UserService {
 				accounts: true
 			}
 		})
-
-		return user
 	}
 
 	public async createWithTransaction(
@@ -76,7 +72,7 @@ export class UserService {
 		method: AuthMethod,
 		isVerified: boolean
 	): Promise<User> {
-		const user = await tx.user.create({
+		return tx.user.create({
 			data: {
 				email,
 				password: password ? await hash(password) : '',
@@ -89,14 +85,12 @@ export class UserService {
 				accounts: true
 			}
 		})
-
-		return user
 	}
 
 	public async update(userId: string, dto: UpdateUserDto): Promise<User> {
 		const user = await this.findById(userId)
 
-		const updatedUser = await this.prismaService.user.update({
+		return this.prismaService.user.update({
 			where: {
 				id: user.id
 			},
@@ -106,7 +100,5 @@ export class UserService {
 				isTwoFactorEnabled: dto.isTwoFactorEnabled
 			}
 		})
-
-		return updatedUser
 	}
 }

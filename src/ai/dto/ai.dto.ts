@@ -11,8 +11,11 @@ export class StreamDto {
 	@IsOptional()
 	@IsNumber()
 	temperature?: number
+}
 
+export class GenerateRecipeDto extends StreamDto {
 	@IsOptional()
-	@IsNumber()
-	maxTokens?: number
+	cuisine?: string
+	@IsOptional()
+	difficulty?: string
 }
