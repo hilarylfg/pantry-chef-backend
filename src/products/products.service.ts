@@ -1,46 +1,108 @@
 import { Injectable } from '@nestjs/common'
 
 import { Product } from '@/generated/prisma/client'
+import { ProductSortField, SortOrder } from '@/libs/common/types/product'
 import { PrismaService } from '@/prisma/prisma.service'
+
+import { FindProductsDto } from './dto/find-products.dto'
+import { ProductDto } from './dto/product.dto'
 
 @Injectable()
 export class ProductsService {
 	public constructor(private readonly prismaService: PrismaService) {}
 
-	public async findProducts(
+	public async findAllProducts(
 		userId: string,
-		category = 'dairy',
-		sort = 'expiryDate',
-		order = 'asc',
-		page = 1,
-		limit = 20
+		dto: FindProductsDto
 	): Promise<Product[]> {
-		const sortOrder = order === 'desc' ? 'desc' : 'asc'
-		const safePage =
-			Number.isFinite(page) && page > 0 ? Math.floor(page) : 1
-		const safeLimit =
-			Number.isFinite(limit) && limit > 0 ? Math.floor(limit) : 20
-		const skip = (safePage - 1) * safeLimit
+		const skip = (dto.page - 1) * dto.limit
 
 		return this.prismaService.product.findMany({
 			where: {
 				userId,
-				category
+				category: dto.category
 			},
-			orderBy:
-				sort === 'createdAt'
-					? { createdAt: sortOrder }
-					: sort === 'name'
-						? { name: sortOrder }
-						: sort === 'amount'
-							? { amount: sortOrder }
-							: sort === 'unit'
-								? { unit: sortOrder }
-								: sort === 'category'
-									? { category: sortOrder }
-									: { expiryDate: sortOrder },
+			orderBy: this.buildOrderBy(dto.sort, dto.order),
 			skip,
-			take: safeLimit
+			take: dto.limit
 		})
+	}
+
+	public async createProduct(
+		userId: string,
+		dto: ProductDto
+	): Promise<Product> {
+		return this.prismaService.product.create({
+			data: {
+				name: dto.name,
+				category: dto.category,
+				amount: dto.amount,
+				unit: dto.unit,
+				expiryDate: dto.expiryDate ? new Date(dto.expiryDate) : null,
+				userId
+			}
+		})
+	}
+
+	public async findProductById(
+		userId: string,
+		productId: string
+	): Promise<Product> {
+		return this.prismaService.product.findFirst({
+			where: {
+				id: productId,
+				userId
+			}
+		})
+	}
+
+	public async updateProduct(
+		userId: string,
+		productId: string,
+		dto: ProductDto
+	): Promise<Product> {
+		const data: Record<string, unknown> = {}
+
+		if (dto.name !== undefined) data.name = dto.name
+		if (dto.category !== undefined) data.category = dto.category
+		if (dto.amount !== undefined) data.amount = dto.amount
+		if (dto.unit !== undefined) data.unit = dto.unit
+		if (dto.expiryDate !== undefined) {
+			data.expiryDate = dto.expiryDate ? new Date(dto.expiryDate) : null
+		}
+
+		return this.prismaService.product.update({
+			where: { id: productId, userId },
+			data
+		})
+	}
+
+	public async deleteProduct(
+		userId: string,
+		productId: string
+	): Promise<Product> {
+		return this.prismaService.product.delete({
+			where: {
+				id: productId,
+				userId
+			}
+		})
+	}
+
+	private buildOrderBy(sort: ProductSortField, order: SortOrder) {
+		switch (sort) {
+			case 'createdAt':
+				return { createdAt: order }
+			case 'name':
+				return { name: order }
+			case 'amount':
+				return { amount: order }
+			case 'unit':
+				return { unit: order }
+			case 'category':
+				return { category: order }
+			default:
+				return { expiryDate: order }
+		}
 	}
 }

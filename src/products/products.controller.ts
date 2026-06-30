@@ -1,7 +1,20 @@
-import { Controller, Get, HttpCode, HttpStatus, Query } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpCode,
+	HttpStatus,
+	Param,
+	Patch,
+	Post,
+	Query
+} from '@nestjs/common'
 
 import { Authorization } from '@/auth/decorators/auth.decorator'
 import { Authorized } from '@/auth/decorators/authorized.decorator'
+import { FindProductsDto } from '@/products/dto/find-products.dto'
+import { ProductDto } from '@/products/dto/product.dto'
 
 import { ProductsService } from './products.service'
 
@@ -12,21 +25,51 @@ export class ProductsController {
 	@Authorization()
 	@HttpCode(HttpStatus.OK)
 	@Get()
-	public async findProducts(
+	public async findAllProducts(
 		@Authorized('id') userId: string,
-		@Query('category') category = 'dairy',
-		@Query('sort') sort = 'expiryDate',
-		@Query('order') order = 'asc',
-		@Query('page') page = '1',
-		@Query('limit') limit = '20'
+		@Query() dto: FindProductsDto
 	) {
-		return this.productsService.findProducts(
-			userId,
-			category,
-			sort,
-			order,
-			Number(page),
-			Number(limit)
-		)
+		return this.productsService.findAllProducts(userId, dto)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Post()
+	public async createProduct(
+		@Authorized('id') userId: string,
+		@Body() dto: ProductDto
+	) {
+		return this.productsService.createProduct(userId, dto)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Get(':productId')
+	public async findProductById(
+		@Authorized('id') userId: string,
+		@Param('productId') productId: string
+	) {
+		return this.productsService.findProductById(userId, productId)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Patch(':productId')
+	public async updateProduct(
+		@Authorized('id') userId: string,
+		@Param('productId') productId: string,
+		@Body() dto: ProductDto
+	) {
+		return this.productsService.updateProduct(userId, productId, dto)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Delete(':productId')
+	public async deleteProduct(
+		@Authorized('id') userId: string,
+		@Param('productId') productId: string
+	) {
+		return this.productsService.deleteProduct(userId, productId)
 	}
 }

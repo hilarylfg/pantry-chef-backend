@@ -1,7 +1,6 @@
 generator client {
-  provider     = "prisma-client"
-  output       = "../src/generated/prisma"
-  moduleFormat = "cjs"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -74,10 +73,13 @@ model Product {
   category   String
   amount     Float
   unit       String
-  expiryDate DateTime?
-  userId     String
+  expiryDate DateTime? @map("expiry_date")
+  userId     String    @map("user_id")
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@map("products")
 }
 
 model Recipe {
@@ -85,10 +87,13 @@ model Recipe {
   title       String
   ingredients Json
   steps       Json
-  isFavorite  Boolean  @default(false)
-  userId      String
+  isFavorite  Boolean  @default(false) @map("is_favorite")
+  userId      String   @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("recipes")
 }
 
 enum UserRole {

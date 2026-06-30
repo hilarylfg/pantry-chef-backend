@@ -1,7 +1,9 @@
 import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
+import { RedisStore } from 'connect-redis'
 import { Express } from 'express'
+import { createClient } from 'redis'
 
 import { AppModule } from './app.module'
 import { ms, StringValue } from './libs/common/utils/ms.util'
@@ -17,6 +19,13 @@ const session = require('express-session') as (options: any) => any
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService)
+	const redis = createClient({
+		url: config.getOrThrow('REDIS_URI')
+	})
+	redis.on('error', err => {
+		console.error('Redis connection error:', err)
+	})
+	await redis.connect()
 
 	app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')))
 
@@ -62,7 +71,11 @@ async function bootstrap() {
 				),
 				secure: sessionSecure,
 				sameSite
-			}
+			},
+			store: new RedisStore({
+				client: redis,
+				prefix: config.getOrThrow<string>('SESSION_FOLDER')
+			})
 		})
 	)
 

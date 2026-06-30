@@ -1,43 +1,10 @@
 import { z } from 'zod'
 
-export const ProductCategoryEnum = z.enum([
-	'dairy',
-	'meat',
-	'poultry',
-	'fish',
-	'seafood',
-	'eggs',
-	'vegetables',
-	'fruits',
-	'grains',
-	'pasta',
-	'bread',
-	'bakery',
-	'canned',
-	'frozen',
-	'spices',
-	'oils',
-	'sauces',
-	'beverages',
-	'snacks',
-	'sweets',
-	'other'
-])
+import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from '@/libs/common/types/product'
 
-export const UnitEnum = z.enum([
-	'g',
-	'kg',
-	'ml',
-	'l',
-	'tbsp',
-	'tsp',
-	'piece',
-	'cup',
-	'pinch',
-	'pack',
-	'bottle',
-	'jar'
-])
+export const ProductCategoryEnum = z.enum(PRODUCT_CATEGORIES)
+
+export const UnitEnum = z.enum(PRODUCT_UNITS)
 
 export const DifficultyEnum = z.enum(['easy', 'medium', 'hard'])
 

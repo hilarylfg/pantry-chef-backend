@@ -1,0 +1,1060 @@
+{
+  "info": {
+    "_postman_id": "pantrychef-backend-local",
+    "name": "PantryChef API",
+    "description": "PantryChef backend — NestJS API for the smart-pantry + AI-chef project.\n\n## Авторизация\nПроект использует **сессионную авторизацию** (cookie-based `express-session`), НЕ JWT.\n\n1. Вызовите `POST /auth/login` — сервер выставит session-cookie (имя берётся из `SESSION_NAME`).\n2. Postman cookie-jar автоматически сохранит cookie и прикрепит её ко всем последующим запросам на тот же домен.\n3. Для защищённых эндпоинтов (помечены 🔒) НЕ нужно добавлять `Authorization` — cookie прикрепится сама.\n\n## Переменные\n- `base_url` — адрес API. Глобального префикса `/v1` НЕТ, поэтому по умолчанию `http://localhost:4000`.\n- `email` / `password` — тестовые креды из seed (`anna@pantrychef.ru` / `Password123!`).\n- `provider` — OAuth-провайдер: `google` | `yandex` | `github`.\n\n## Структура\n✅ — реализованные эндпоинты. 🚧 PLANNED — эндпоинты, которых ещё нет в коде (папки-плейсхолдеры для будущей реализации).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "description": "Регистрация, вход, выход, OAuth.",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Алексей\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"passwordRepeat\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.user && json.user.id) {",
+                  "    pm.collectionVariables.set('user_id', json.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "OAuth Connect",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/oauth/connect/{{provider}}",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "oauth", "connect", "{{provider}}"]
+            },
+            "description": "Возвращает `{ url }` — ссылку для редиректа на OAuth-провайдера. Подставьте `provider` = google | yandex | github."
+          },
+          "response": []
+        },
+        {
+          "name": "OAuth Callback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/oauth/callback/{{provider}}?code=OAUTH_CODE_HERE",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "oauth", "callback", "{{provider}}"],
+              "query": [
+                { "key": "code", "value": "OAUTH_CODE_HERE" }
+              ]
+            },
+            "description": "Callback, на который редиректит OAuth-провайдер с `?code=`. При успехе редиректит на `ALLOWED_ORIGINS` и выставляет session-cookie."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📧 Email & Recovery",
+      "description": "Подтверждение email и восстановление пароля.",
+      "item": [
+        {
+          "name": "Email Confirmation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"VERIFICATION_TOKEN_FROM_EMAIL\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/email-confirmation",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "email-confirmation"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Password Reset (request)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/password-recovery/reset",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "password-recovery", "reset"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Password New (set)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"NewSecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/password-recovery/new/{{token}}",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "password-recovery", "new", "{{token}}"]
+            },
+            "description": "Установка нового пароля по токену из письма. Подставьте `token`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👤 Users",
+      "description": "Профиль пользователя.",
+      "item": [
+        {
+          "name": "Get Me 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile 🔒",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Анна Соколова\",\n  \"email\": \"{{email}}\",\n  \"isTwoFactorEnabled\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get By ID (Admin) 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/by-id/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "by-id", "{{user_id}}"]
+            },
+            "description": "Только для роли ADMIN. Подставьте `user_id`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔑 2FA Flow",
+      "description": "Поток двухфакторной авторизации.\n1. Включите 2FA через PATCH /users/me (isTwoFactorEnabled: true).\n2. Войдите без code → сервер ответит, что нужен код, и пришлёт его на почту.\n3. Войдите повторно с code → успех и session-cookie.",
+      "item": [
+        {
+          "name": "1. Enable 2FA 🔒",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Анна Соколова\",\n  \"email\": \"{{email}}\",\n  \"isTwoFactorEnabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["users", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Login (no code) → server sends code",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Сервер ответит сообщением «требуется код» и отправит код на почту."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Login (with code) → session",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"code\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Подставьте код из письма в поле `code`. При успехе выставляется session-cookie."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🥑 Products",
+      "item": [
+        {
+          "name": "List Products 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (Array.isArray(data) && data.length > 0 && data[0].id) {",
+                  "    pm.collectionVariables.set('product_id', data[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?category=dairy&sort=expiryDate&order=asc&page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "category", "value": "dairy" },
+                { "key": "sort", "value": "expiryDate" },
+                { "key": "order", "value": "asc" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "Параметры: category (по умолчанию dairy), sort (expiryDate|createdAt|name|amount|unit|category), order (asc|desc), page, limit."
+          },
+          "response": []
+        },
+        {
+          "name": "🚧 PLANNED (not implemented)",
+          "description": "Эти эндпоинты ещё не реализованы в коде. Тела оставлены как спецификация для будущей реализации. Уберите их отсюда после реализации и проверьте контракт с реальным DTO.",
+          "item": [
+            {
+              "name": "Create Product (Manual) 🔒",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Молоко Простоквашино\",\n  \"category\": \"dairy\",\n  \"amount\": 1,\n  \"unit\": \"l\",\n  \"expiryDate\": \"2026-07-01\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products",
+                  "host": ["{{base_url}}"],
+                  "path": ["products"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Scan Photo (Vision) 🔒",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    { "key": "photo", "type": "file", "src": "/path/to/fridge.jpg" },
+                    { "key": "location", "type": "text", "value": "fridge" }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/scan",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "scan"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Scan QR (Честный ЗНАК) 🔒",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rawValue\": \"0104607060503715215&b.AW 93+yvK\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/scan-qr",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "scan-qr"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Batch Confirm (after scan) 🔒",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scanId\": \"scan_abc123\",\n  \"products\": [\n    {\n      \"recognizedIndex\": 0,\n      \"confirmed\": true,\n      \"corrections\": {\n        \"name\": \"Молоко\",\n        \"amount\": 0.9\n      }\n    },\n    {\n      \"recognizedIndex\": 1,\n      \"confirmed\": true,\n      \"corrections\": null\n    }\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/batch",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "batch"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Product 🔒",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/products/{{product_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "{{product_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Product 🔒",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 0.5,\n  \"expiryDate\": \"2026-06-25\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/{{product_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "{{product_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Product 🔒",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/products/{{product_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "{{product_id}}"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Expiring Soon 🔒",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/products/expiring",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "expiring"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Consume Product 🔒",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amountUsed\": 0.5\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/products/{{product_id}}/consume",
+                  "host": ["{{base_url}}"],
+                  "path": ["products", "{{product_id}}", "consume"]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🍳 Recipes 🚧 PLANNED",
+      "description": "Контроллер recipes в коде пока пустой. Эндпоинты ниже — спецификация для будущей реализации.",
+      "item": [
+        {
+          "name": "List My Recipes 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recipes",
+              "host": ["{{base_url}}"],
+              "path": ["recipes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Recipes (AI) 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productIds\": [\n    \"{{product_id}}\"\n  ],\n  \"constraints\": {\n    \"maxTimeMinutes\": 30,\n    \"difficulty\": \"easy\",\n    \"cuisine\": \"italian\",\n    \"mealType\": \"dinner\",\n    \"servings\": 2\n  },\n  \"options\": {\n    \"count\": 3,\n    \"includeShoppingList\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recipes/generate",
+              "host": ["{{base_url}}"],
+              "path": ["recipes", "generate"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recipe 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recipes/{{recipe_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["recipes", "{{recipe_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Recipe (Favorite) 🔒",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isFavorite\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recipes/{{recipe_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["recipes", "{{recipe_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Recipe 🔒",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recipes/{{recipe_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["recipes", "{{recipe_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cook Recipe (Consume Ingredients) 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recipes/{{recipe_id}}/cook",
+              "host": ["{{base_url}}"],
+              "path": ["recipes", "{{recipe_id}}", "cook"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Regenerate Similar 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"variation\": \"spicy\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recipes/{{recipe_id}}/regenerate",
+              "host": ["{{base_url}}"],
+              "path": ["recipes", "{{recipe_id}}", "regenerate"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🤖 AI",
+      "description": "LLM-эндпоинты (OpenRouter). Ответ стримится (text stream).",
+      "item": [
+        {
+          "name": "Stream Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Предложи рецепт из курицы и риса\",\n  \"temperature\": 0.7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/stream",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "stream"]
+            },
+            "description": "Свободный чат с LLM. Поля: prompt (обязательно), model?, temperature?. Ответ стримится."
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Recipe",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Сгенерируй рецепт из спагетти, куриной грудки и помидоров\",\n  \"cuisine\": \"italian\",\n  \"difficulty\": \"easy\",\n  \"temperature\": 0.7\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/generate",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "generate"]
+            },
+            "description": "Генерация структурированного рецепта по схеме LLMRecipeSchema. Поля: prompt (обязательно), model?, temperature?, cuisine?, difficulty?. Ответ стримится."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📅 Meal Plans 🚧 PLANNED",
+      "description": "Планировщик питания на неделю. Не реализовано.",
+      "item": [
+        {
+          "name": "Get Current Plan 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meal-plans",
+              "host": ["{{base_url}}"],
+              "path": ["meal-plans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Plan 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"days\": 7,\n  \"mealsPerDay\": 3,\n  \"startDate\": \"2026-06-29\",\n  \"preferences\": {\n    \"maxPrepTimeMinutes\": 40,\n    \"variety\": \"high\",\n    \"leftovers\": true,\n    \"budget\": \"medium\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/meal-plans/generate",
+              "host": ["{{base_url}}"],
+              "path": ["meal-plans", "generate"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Plan Day 🔒",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dayIndex\": 2,\n  \"mealType\": \"dinner\",\n  \"recipeId\": \"{{recipe_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/meal-plans/{{plan_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["meal-plans", "{{plan_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Accept Plan & Create Shopping List 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/meal-plans/{{plan_id}}/accept",
+              "host": ["{{base_url}}"],
+              "path": ["meal-plans", "{{plan_id}}", "accept"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Plan 🔒",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meal-plans/{{plan_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["meal-plans", "{{plan_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🛒 Shopping Lists 🚧 PLANNED",
+      "description": "Списки покупок. Не реализовано.",
+      "item": [
+        {
+          "name": "Get All Lists 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shopping-lists",
+              "host": ["{{base_url}}"],
+              "path": ["shopping-lists"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current List 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shopping-lists/current",
+              "host": ["{{base_url}}"],
+              "path": ["shopping-lists", "current"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Manual List 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Срочные покупки\",\n  \"items\": [\n    {\n      \"name\": \"Хлеб\",\n      \"amount\": 1,\n      \"unit\": \"piece\",\n      \"category\": \"bread\"\n    },\n    {\n      \"name\": \"Молоко\",\n      \"amount\": 2,\n      \"unit\": \"l\",\n      \"category\": \"dairy\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shopping-lists",
+              "host": ["{{base_url}}"],
+              "path": ["shopping-lists"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate From Meal Plan 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"{{plan_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shopping-lists/from-plan",
+              "host": ["{{base_url}}"],
+              "path": ["shopping-lists", "from-plan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update List 🔒",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"addItems\": [\n    {\n      \"name\": \"Сыр\",\n      \"amount\": 200,\n      \"unit\": \"g\",\n      \"category\": \"dairy\"\n    }\n  ],\n  \"removeItemIds\": [\n    \"{{item_id}}\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shopping-lists/{{list_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["shopping-lists", "{{list_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Item Purchased 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shopping-lists/{{list_id}}/items/{{item_id}}/toggle",
+              "host": ["{{base_url}}"],
+              "path": ["shopping-lists", "{{list_id}}", "items", "{{item_id}}", "toggle"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete List 🔒",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shopping-lists/{{list_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["shopping-lists", "{{list_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📱 Telegram 🚧 PLANNED",
+      "description": "Telegram Bot webhook + TMA. Не реализовано.",
+      "item": [
+        {
+          "name": "Webhook (from Telegram)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"update_id\": 123456789,\n  \"message\": {\n    \"message_id\": 1,\n    \"from\": {\n      \"id\": 123456,\n      \"first_name\": \"Алексей\"\n    },\n    \"chat\": {\n      \"id\": 123456,\n      \"type\": \"private\"\n    },\n    \"date\": 1719000000,\n    \"text\": \"/start\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/telegram/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["telegram", "webhook"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Inline Query (Share Recipe)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inline_query\": {\n    \"id\": \"query_123\",\n    \"from\": {\n      \"id\": 123456\n    },\n    \"query\": \"recipe:{{recipe_id}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/telegram/inline",
+              "host": ["{{base_url}}"],
+              "path": ["telegram", "inline"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⚙️ System",
+      "item": [
+        {
+          "name": "Root (Hello)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Корневой эндпоинт AppController. Возвращает hello-строку."
+          },
+          "response": []
+        },
+        {
+          "name": "🚧 PLANNED (not implemented)",
+          "description": "Health, feedback, stats — не реализованы.",
+          "item": [
+            {
+              "name": "Health Check",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/health",
+                  "host": ["{{base_url}}"],
+                  "path": ["health"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Health DB",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/health/db",
+                  "host": ["{{base_url}}"],
+                  "path": ["health", "db"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Send Feedback 🔒",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"type\": \"bad_recipe\",\n  \"recipeId\": \"{{recipe_id}}\",\n  \"message\": \"Рецепт слишком сложный для 30 минут\",\n  \"rating\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/feedback",
+                  "host": ["{{base_url}}"],
+                  "path": ["feedback"]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "My Stats 🔒",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/stats/me",
+                  "host": ["{{base_url}}"],
+                  "path": ["stats", "me"]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:4000",
+      "type": "string"
+    },
+    {
+      "key": "email",
+      "value": "anna@pantrychef.ru",
+      "type": "string"
+    },
+    {
+      "key": "password",
+      "value": "Password123!",
+      "type": "string"
+    },
+    {
+      "key": "provider",
+      "value": "google",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "product_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "recipe_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "plan_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "list_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "item_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
