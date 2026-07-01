@@ -14,7 +14,7 @@ import {
 import { Authorization } from '@/auth/decorators/auth.decorator'
 import { Authorized } from '@/auth/decorators/authorized.decorator'
 import { FindProductsDto } from '@/products/dto/find-products.dto'
-import { ProductDto } from '@/products/dto/product.dto'
+import { ConsumeProductDto, ProductDto } from '@/products/dto/product.dto'
 
 import { ProductsService } from './products.service'
 
@@ -71,5 +71,26 @@ export class ProductsController {
 		@Param('productId') productId: string
 	) {
 		return this.productsService.deleteProduct(userId, productId)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Get('expiring')
+	public async expiringSoonProducts(
+		@Authorized('id') userId: string,
+		@Query() days = '3'
+	) {
+		return this.productsService.expiringSoonProducts(userId, days)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Post(':productId/consume')
+	public async consumeProduct(
+		@Authorized('id') userId: string,
+		@Param('productId') productId: string,
+		@Body() dto: ConsumeProductDto
+	) {
+		return this.productsService.consumeProduct(userId, productId, dto)
 	}
 }

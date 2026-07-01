@@ -5,7 +5,7 @@ import { ProductSortField, SortOrder } from '@/libs/common/types/product'
 import { PrismaService } from '@/prisma/prisma.service'
 
 import { FindProductsDto } from './dto/find-products.dto'
-import { ProductDto } from './dto/product.dto'
+import { ConsumeProductDto, ProductDto } from './dto/product.dto'
 
 @Injectable()
 export class ProductsService {
@@ -86,6 +86,44 @@ export class ProductsService {
 				id: productId,
 				userId
 			}
+		})
+	}
+
+	public async expiringSoonProducts(
+		userId: string,
+		days: string
+	): Promise<Product[]> {
+		return this.prismaService.product.findMany({
+			where: {
+				userId,
+				expiryDate: {
+					gte: new Date(),
+					lte: new Date(Date.now() + Number(days) * 86400000)
+				}
+			}
+		})
+	}
+
+	public async consumeProduct(
+		userId: string,
+		productId: string,
+		dto: ConsumeProductDto
+	): Promise<Product> {
+		const product = await this.prismaService.product.findFirst({
+			where: { id: productId, userId }
+		})
+
+		const newAmount = product.amount - dto.amount
+
+		if (newAmount <= 0) {
+			return this.prismaService.product.delete({
+				where: { id: productId }
+			})
+		}
+
+		return this.prismaService.product.update({
+			where: { id: productId },
+			data: { amount: newAmount }
 		})
 	}
 

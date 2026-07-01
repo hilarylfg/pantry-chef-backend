@@ -56,11 +56,13 @@ export const RecognizedProductSchema = z.object({
 export const LLMRecipeSchema = z.object({
 	title: z.string().min(3).max(100),
 	description: z.string().max(300),
+	cuisine: z.string().optional(),
 	difficulty: DifficultyEnum,
 	prepTimeMinutes: z.number().int().positive(),
 	cookTimeMinutes: z.number().int().positive(),
 	servings: z.number().int().positive(),
 	caloriesPerServing: z.number().int().positive().optional(),
+	tags: z.array(z.string()).max(5).optional(),
 	ingredients: z.array(IngredientSchema).min(1),
 	steps: z
 		.array(
@@ -71,5 +73,10 @@ export const LLMRecipeSchema = z.object({
 				tip: z.string().max(300).optional()
 			})
 		)
-		.min(1)
+		.min(1),
+	equipment: z.array(z.string()).optional()
+})
+
+export const VisionResultSchema = z.object({
+	products: z.array(RecognizedProductSchema).min(0)
 })

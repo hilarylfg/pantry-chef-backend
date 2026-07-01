@@ -36,3 +36,5 @@ export class ProductDto {
 	@IsString({ message: 'Срок годности должен быть строкой в формате ISO.' })
 	expiryDate?: string
 }
+
+export type ConsumeProductDto = Pick<ProductDto, 'amount'>
