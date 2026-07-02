@@ -93,4 +93,14 @@ export class ProductsController {
 	) {
 		return this.productsService.consumeProduct(userId, productId, dto)
 	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Post('/scan-barcode')
+	public async scanBarcode(
+		@Authorized('id') userId: string,
+		@Body() dto: BarcodeDto
+	) {
+		return this.productsService.scanBarcode(userId, dto)
+	}
 }
