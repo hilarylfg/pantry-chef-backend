@@ -1,11 +1,6 @@
-import { tmpl } from './tmpl'
+import { Product } from '@/generated/prisma/client'
 
-export interface ProductInfo {
-	name: string
-	amount: number
-	unit: string
-	expiryDays?: number
-}
+import { tmpl } from './tmpl'
 
 export interface RecipeConstraints {
 	maxTimeMinutes: number
@@ -16,17 +11,21 @@ export interface RecipeConstraints {
 	diet?: string
 	language?: string
 	equipment?: string[]
+	options: {
+		count?: number
+		includeShoppingList?: boolean
+	}
 }
 
 export function buildRecipeUserPrompt(
-	products: ProductInfo[],
+	products: Product[],
 	constraints: RecipeConstraints
 ): string {
 	const productLines = products.map(p => {
 		let line = `- ${p.name}: ${p.amount} ${p.unit}`
 
-		if (p.expiryDays) {
-			line += ` (срок годности истекает через ${p.expiryDays} дней — используй в первую очередь)`
+		if (p.expiryDate) {
+			line += ` (срок годности истекает через ${p.expiryDate} дней — используй в первую очередь)`
 		}
 
 		return line
@@ -49,6 +48,7 @@ ${constraints.diet ? `- Диета пользователя: ${constraints.diet}
 ${constraints.language ? `- Язык ответа: ${constraints.language}` : null}
 ${equipmentStr ? `- Доступное оборудование: ${equipmentStr}` : null}
 
+Количество рецептов: ${constraints.options.count ?? 1}
 ПРИОРИТЕТ: используй продукты с истекающим сроком в первую очередь.
 ${equipmentStr ? 'Если рецепт требует оборудования вне списка — предложи альтернативу или упрости.' : null}`
 }

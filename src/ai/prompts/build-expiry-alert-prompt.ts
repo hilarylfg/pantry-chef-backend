@@ -1,5 +1,6 @@
+import { Product } from '@/generated/prisma/client'
+
 import { tmpl } from './tmpl'
-import type { ProductInfo } from './build-recipe-prompt'
 
 export interface ExpiryAlertConstraints {
 	maxExpiryDays: number
@@ -7,16 +8,21 @@ export interface ExpiryAlertConstraints {
 }
 
 export function buildExpiryAlertUserPrompt(
-	expiringProducts: ProductInfo[],
+	expiringProducts: Product[],
 	constraints: ExpiryAlertConstraints,
-	otherProducts?: ProductInfo[]
+	otherProducts?: Product[]
 ): string {
-	const expiringLines = expiringProducts.map((p) => {
-		return `- ${p.name}: ${p.amount} ${p.unit} (осталось ${p.expiryDays} дней)`
+	const expiringLines = expiringProducts.map(p => {
+		return `- ${p.name}: ${p.amount} ${p.unit} (осталось ${p.expiryDate} дней)`
 	})
 
 	const otherLines = otherProducts?.length
-		? ['', 'Остальные продукты в холодильнике:', ...otherProducts.map((p) => `- ${p.name}: ${p.amount} ${p.unit}`), '']
+		? [
+				'',
+				'Остальные продукты в холодильнике:',
+				...otherProducts.map(p => `- ${p.name}: ${p.amount} ${p.unit}`),
+				''
+			]
 		: null
 
 	return tmpl`

@@ -5,7 +5,7 @@ import { Authorization } from '@/auth/decorators/auth.decorator'
 import { Authorized } from '@/auth/decorators/authorized.decorator'
 
 import { AiService } from './ai.service'
-import { GenerateRecipeDto, StreamDto } from './dto/chat.dto'
+import { StreamDto } from './dto/chat.dto'
 import { ScanQrDto } from './dto/scan.dto'
 import { VisionService } from './vision.service'
 
@@ -23,17 +23,8 @@ export class AiController {
 	}
 
 	@Authorization()
-	@Post('generate')
-	generate(@Body() dto: GenerateRecipeDto, @Res() res: Response) {
-		this.aiService.generateRecipe(dto).pipeTextStreamToResponse(res)
-	}
-
-	@Authorization()
 	@Post('scan-qr')
-	scanQr(
-		@Authorized('id') _userId: string,
-		@Body() dto: ScanQrDto
-	) {
+	scanQr(@Authorized('id') _userId: string, @Body() dto: ScanQrDto) {
 		return this.visionService.parseQrCode(dto)
 	}
 }

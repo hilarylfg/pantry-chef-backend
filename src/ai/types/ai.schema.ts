@@ -77,6 +77,10 @@ export const LLMRecipeSchema = z.object({
 	equipment: z.array(z.string()).optional()
 })
 
+export const RecipesSchema = z.object({
+	recipes: z.array(LLMRecipeSchema)
+})
+
 export const VisionResultSchema = z.object({
 	products: z.array(RecognizedProductSchema).min(0)
 })

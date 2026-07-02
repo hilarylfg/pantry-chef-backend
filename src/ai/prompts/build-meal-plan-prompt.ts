@@ -1,5 +1,6 @@
+import { Product } from '@/generated/prisma/client'
+
 import { tmpl } from './tmpl'
-import type { ProductInfo } from './build-recipe-prompt'
 
 export interface MealPlanConstraints {
 	days: number
@@ -16,13 +17,13 @@ export interface MealPlanConstraints {
 }
 
 export function buildMealPlanUserPrompt(
-	products: ProductInfo[],
+	products: Product[],
 	constraints: MealPlanConstraints
 ): string {
-	const productLines = products.map((p) => {
+	const productLines = products.map(p => {
 		let line = `- ${p.name}: ${p.amount} ${p.unit}`
-		if (p.expiryDays) {
-			line += ` (срок годности истекает через ${p.expiryDays} дней)`
+		if (p.expiryDate) {
+			line += ` (срок годности истекает через ${p.expiryDate} дней)`
 		}
 		return line
 	})

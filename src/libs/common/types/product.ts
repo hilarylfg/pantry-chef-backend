@@ -50,7 +50,25 @@ export const PRODUCT_SORT_FIELDS = [
 	'category'
 ] as const
 
+export const DIFFICULTIES = ['easy', 'medium', 'hard'] as const
+
+export const CUISINES = [
+	'italian',
+	'asian',
+	'russian',
+	'mexican',
+	'mediterranean',
+	'fusion',
+	'other'
+] as const
+
+export const MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'] as const
+
 export type ProductSortField = (typeof PRODUCT_SORT_FIELDS)[number]
+
+export const RECIPE_SORT_FIELDS = ['createdAt', 'title', 'favorite'] as const
+
+export type RecipeSortField = (typeof RECIPE_SORT_FIELDS)[number]
 
 export const SORT_ORDERS = ['asc', 'desc'] as const
 
