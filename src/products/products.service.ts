@@ -1,11 +1,11 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 
-import { AiService } from '@/ai/ai.service'
-import { gtinEnrichment } from '@/ai/prompts/gtin-enrichment'
-import { GtinProductSchema } from '@/ai/types/ai.schema'
-import { Product } from '@/generated/prisma/client'
-import { ProductSortField, SortOrder } from '@/libs/common/types/product'
-import { PrismaService } from '@/prisma/prisma.service'
+import { AiService } from '../ai/ai.service'
+import { gtinEnrichment } from '../ai/prompts/gtin-enrichment'
+import { GtinProductSchema } from '../ai/types/ai.schema'
+import { Product } from '../generated/prisma/client'
+import { ProductSortField, SortOrder } from '../libs/common/types/product'
+import { PrismaService } from '../prisma/prisma.service'
 
 import { FindProductsDto } from './dto/find-products.dto'
 import { ConsumeProductDto, ProductDto } from './dto/product.dto'

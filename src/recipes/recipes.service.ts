@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common'
 
-import { AiService } from '@/ai/ai.service'
+import { AiService } from '../ai/ai.service'
 import {
 	buildRecipeUserPrompt,
 	RecipeConstraints
-} from '@/ai/prompts/build-recipe-prompt'
-import { RecipesSchema } from '@/ai/types/ai.schema'
-import { Recipe } from '@/generated/prisma/client'
-import { RecipeSortField, SortOrder } from '@/libs/common/types/product'
-import { PrismaService } from '@/prisma/prisma.service'
-import { FindRecipesDto } from '@/recipes/dto/find-recipes.dto'
-import { GenerateRecipeDto } from '@/recipes/dto/generate-recipe.dto'
-import { UpdateRecipeDto } from '@/recipes/dto/update-recipe.dto'
+} from '../ai/prompts/build-recipe-prompt'
+import { RecipesSchema } from '../ai/types/ai.schema'
+import { Recipe } from '../generated/prisma/client'
+import { RecipeSortField, SortOrder } from '../libs/common/types/product'
+import { PrismaService } from '../prisma/prisma.service'
+import { FindRecipesDto } from './dto/find-recipes.dto'
+import { GenerateRecipeDto } from './dto/generate-recipe.dto'
+import { UpdateRecipeDto } from './dto/update-recipe.dto'
 
 @Injectable()
 export class RecipesService {

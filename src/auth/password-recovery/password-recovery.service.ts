@@ -6,10 +6,10 @@ import {
 import { hash } from 'argon2'
 import { v4 as uuidv4 } from 'uuid'
 
-import { TokenType } from '@/generated/prisma/enums'
-import { MailService } from '@/libs/mail/mail.service'
-import { PrismaService } from '@/prisma/prisma.service'
-import { UserService } from '@/user/user.service'
+import { TokenType } from '../../generated/prisma/enums'
+import { MailService } from '../../libs/mail/mail.service'
+import { PrismaService } from '../../prisma/prisma.service'
+import { UserService } from '../../user/user.service'
 
 import { NewPasswordDto } from './dto/new-password.dto'
 import { ResetPasswordDto } from './dto/reset-password.dto'

@@ -6,8 +6,8 @@ import {
 	DEFAULT_CHAT_MODEL,
 	DEFAULT_RECIPE_MODEL,
 	DEFAULT_TEMPERATURE
-} from '@/ai/types/constants'
-import { RECIPE_SYSTEM_PROMPT } from '@/ai/types/prompts'
+} from './types/constants'
+import { RECIPE_SYSTEM_PROMPT } from './types/prompts'
 
 import { StreamDto } from './dto/chat.dto'
 import { OPENROUTER_CLIENT, OpenRouterClient } from './providers/openrouter'

@@ -1,4 +1,4 @@
-import { Product } from '@/generated/prisma/client'
+import { Product } from '../../generated/prisma/client'
 
 import { tmpl } from './tmpl'
 

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { hash } from 'argon2'
 
-import { AuthMethod, PrismaClient, User } from '@/generated/prisma/client'
-import { PrismaService } from '@/prisma/prisma.service'
+import { AuthMethod, PrismaClient, User } from '../generated/prisma/client'
+import { PrismaService } from '../prisma/prisma.service'
 
 import { UpdateUserDto } from './dto/update-user.dto'
 

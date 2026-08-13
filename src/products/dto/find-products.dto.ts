@@ -8,7 +8,7 @@ import {
 	ProductSortField,
 	SORT_ORDERS,
 	SortOrder
-} from '@/libs/common/types/product'
+} from '../../libs/common/types/product'
 
 export class FindProductsDto {
 	@IsOptional()

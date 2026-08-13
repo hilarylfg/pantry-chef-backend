@@ -10,11 +10,11 @@ import {
 	Post
 } from '@nestjs/common'
 
-import { Authorization } from '@/auth/decorators/auth.decorator'
-import { Authorized } from '@/auth/decorators/authorized.decorator'
-import { FindRecipesDto } from '@/recipes/dto/find-recipes.dto'
-import { GenerateRecipeDto } from '@/recipes/dto/generate-recipe.dto'
-import { UpdateRecipeDto } from '@/recipes/dto/update-recipe.dto'
+import { Authorization } from '../auth/decorators/auth.decorator'
+import { Authorized } from '../auth/decorators/authorized.decorator'
+import { FindRecipesDto } from './dto/find-recipes.dto'
+import { GenerateRecipeDto } from './dto/generate-recipe.dto'
+import { UpdateRecipeDto } from './dto/update-recipe.dto'
 
 import { RecipesService } from './recipes.service'
 

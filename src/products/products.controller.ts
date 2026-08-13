@@ -11,10 +11,10 @@ import {
 	Query
 } from '@nestjs/common'
 
-import { Authorization } from '@/auth/decorators/auth.decorator'
-import { Authorized } from '@/auth/decorators/authorized.decorator'
-import { FindProductsDto } from '@/products/dto/find-products.dto'
-import { ConsumeProductDto, ProductDto } from '@/products/dto/product.dto'
+import { Authorization } from '../auth/decorators/auth.decorator'
+import { Authorized } from '../auth/decorators/authorized.decorator'
+import { FindProductsDto } from './dto/find-products.dto'
+import { ConsumeProductDto, ProductDto } from './dto/product.dto'
 
 import { ProductsService } from './products.service'
 

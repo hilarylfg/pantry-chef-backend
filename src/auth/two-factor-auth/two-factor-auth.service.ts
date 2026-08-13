@@ -4,9 +4,9 @@ import {
 	NotFoundException
 } from '@nestjs/common'
 
-import { TokenType } from '@/generated/prisma/client'
-import { MailService } from '@/libs/mail/mail.service'
-import { PrismaService } from '@/prisma/prisma.service'
+import { TokenType } from '../../generated/prisma/client'
+import { MailService } from '../../libs/mail/mail.service'
+import { PrismaService } from '../../prisma/prisma.service'
 
 @Injectable()
 export class TwoFactorAuthService {

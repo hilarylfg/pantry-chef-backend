@@ -2,7 +2,7 @@ import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-val
 
 
 
-import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from '@/libs/common/types/product';
+import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from '../../libs/common/types/product';
 
 
 

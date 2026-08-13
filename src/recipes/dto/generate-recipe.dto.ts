@@ -11,7 +11,7 @@ import {
 	ValidateNested
 } from 'class-validator'
 
-import { CUISINES, DIFFICULTIES, MEAL_TYPES } from '@/libs/common/types/product'
+import { CUISINES, DIFFICULTIES, MEAL_TYPES } from '../../libs/common/types/product'
 
 export class GenerateRecipeOptionsDto {
 	@IsOptional()
