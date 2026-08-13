@@ -27,7 +27,7 @@ export class YandexProvider extends BaseOAuthService {
 	}
 }
 
-interface YandexProfile {
+interface YandexProfile extends Record<string, unknown> {
 	login: string
 	id: string
 	client_id: string

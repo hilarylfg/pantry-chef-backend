@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { render } from '@react-email/components'
 
@@ -9,6 +9,8 @@ import { TwoFactorAuthTemplate } from './templates/two-factor-auth.template'
 
 @Injectable()
 export class MailService {
+	private readonly logger = new Logger(MailService.name)
+
 	public constructor(
 		private readonly mailerService: MailerService,
 		private readonly configService: ConfigService
@@ -64,12 +66,12 @@ export class MailService {
 					}
 				})
 			} catch (err) {
-				console.warn(
-					'Failed to check contact on Resend (network):',
-					err
-				)
-				return null
-			}
+					this.logger.warn(
+						'Failed to check contact on Resend (network):',
+						err
+					)
+					return null
+				}
 		}
 
 		try {
@@ -95,7 +97,7 @@ export class MailService {
 					)
 
 					if (!createResp.ok) {
-						console.warn(
+						this.logger.warn(
 							'Failed to create contact on Resend:',
 							createResp.status
 						)
@@ -112,16 +114,16 @@ export class MailService {
 						}
 					}
 
-					console.warn(
+					this.logger.warn(
 						'Contact created but not available after polling'
 					)
 					return false
 				} catch (err) {
-					console.warn('Failed to create contact on Resend:', err)
+					this.logger.warn('Failed to create contact on Resend:', err)
 					return false
 				}
 			} else if (!checkResp.ok) {
-				console.warn(
+				this.logger.warn(
 					'Unexpected response when checking contact on Resend:',
 					checkResp.status
 				)
@@ -130,7 +132,10 @@ export class MailService {
 
 			return true
 		} catch (err) {
-			console.warn('Failed to check/create contact on Resend:', err)
+			this.logger.warn(
+				'Failed to check/create contact on Resend:',
+				err
+			)
 			return false
 		}
 	}

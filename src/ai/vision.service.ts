@@ -12,7 +12,6 @@ export class VisionService {
 
 	public async scanPhoto(imageBase64: string, mimeType: string) {
 		// TODO: реализовать вызов vision-модели через generateObject
-		// this.openrouter(DEFAULT_VISION_MODEL) + VISION_SYSTEM_PROMPT + VisionResultSchema
 		// Сохранить результат во временное хранилище (scanId) для batch-confirm
 		return {
 			scanId: '',

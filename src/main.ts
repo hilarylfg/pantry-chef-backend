@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common'
+import { Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { RedisStore } from 'connect-redis'
@@ -10,13 +10,12 @@ import { ms, StringValue } from './libs/common/utils/ms.util'
 import { parseBoolean } from './libs/common/utils/parse-boolean.util'
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const cookieParser = require('cookie-parser') as (
-	secret?: string | string[]
-) => any
+import cookieParser = require('cookie-parser')
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const session = require('express-session') as (options: any) => any
+import session = require('express-session')
 
 async function bootstrap() {
+	const logger = new Logger('Bootstrap')
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService)
 	const redis = createClient({
@@ -24,7 +23,7 @@ async function bootstrap() {
 		password: config.getOrThrow<string>('REDIS_PASSWORD')
 	})
 	redis.on('error', err => {
-		console.error('Redis connection error:', err)
+		logger.error('Redis connection error:', err)
 	})
 	await redis.connect()
 

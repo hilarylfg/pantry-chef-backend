@@ -19,8 +19,7 @@ export class AiService {
 		private readonly openrouter: OpenRouterClient
 	) {}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	public streamChat(dto: StreamDto): any {
+	public streamChat(dto: StreamDto): ReturnType<typeof streamText> {
 		return streamText({
 			model: this.openrouter(dto.model ?? DEFAULT_CHAT_MODEL),
 			messages: [{ role: 'user', content: dto.prompt }],

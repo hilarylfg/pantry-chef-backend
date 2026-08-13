@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 
 import { AiService } from '@/ai/ai.service'
 import { gtinEnrichment } from '@/ai/prompts/gtin-enrichment'
@@ -13,6 +13,8 @@ import { OffResponse } from './types/off-product.types'
 
 @Injectable()
 export class ProductsService {
+	private readonly logger = new Logger(ProductsService.name)
+
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly aiService: AiService
@@ -179,7 +181,8 @@ export class ProductsService {
 					temperature: 0
 				}
 			)
-		} catch {
+		} catch (err) {
+			this.logger.error('AI barcode recognition failed:', err)
 			throw new NotFoundException(
 				'Не удалось распознать продукт по штрихкоду. Добавьте вручную.'
 			)

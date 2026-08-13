@@ -50,7 +50,7 @@ export class GithubProvider extends BaseOAuthService {
 	}
 }
 
-interface GitHubProfile extends Record<string, any> {
+interface GitHubProfile extends Record<string, unknown> {
 	login: string
 	id: number
 	node_id: string

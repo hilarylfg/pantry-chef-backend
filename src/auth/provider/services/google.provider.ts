@@ -25,7 +25,7 @@ export class GoogleProvider extends BaseOAuthService {
 	}
 }
 
-interface GoogleProfile extends Record<string, any> {
+interface GoogleProfile extends Record<string, unknown> {
 	aud: string
 	azp: string
 	email: string

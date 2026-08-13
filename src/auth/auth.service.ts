@@ -2,6 +2,7 @@ import {
 	ConflictException,
 	Injectable,
 	InternalServerErrorException,
+	Logger,
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
@@ -22,6 +23,8 @@ import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service'
 
 @Injectable()
 export class AuthService {
+	private readonly logger = new Logger(AuthService.name)
+
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly userService: UserService,
@@ -64,6 +67,7 @@ export class AuthService {
 					'Вы успешно зарегистрировались. Пожалуйста, подтвердите ваш email. Сообщение было отправлено на ваш почтовый адрес.'
 			}
 		} catch (err: unknown) {
+			this.logger.error('Registration failed:', err)
 			if (err instanceof Error && err.message.includes('Timeout')) {
 				throw new InternalServerErrorException(
 					'Не удалось отправить письмо с подтверждением. Пожалуйста, проверьте настройки почты и попробуйте снова.'

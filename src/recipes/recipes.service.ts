@@ -111,7 +111,10 @@ export class RecipesService {
 		})
 	}
 
-	private buildOrderBy(sort?: RecipeSortField, order?: SortOrder): any {
+	private buildOrderBy(
+		sort?: RecipeSortField,
+		order?: SortOrder
+	): Record<string, SortOrder> {
 		if (!sort || !order) return { createdAt: 'desc' }
 
 		switch (sort) {
