@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common'
+
 import { BaseOAuthService } from './base-oauth.service'
 import { TypeProviderOptions } from './types/provider-options.types'
 import { TypeUserInfo } from './types/user-info.types'
@@ -16,7 +18,7 @@ export class GithubProvider extends BaseOAuthService {
 	}
 
 	public async extractUserInfo(data: GitHubProfile): Promise<TypeUserInfo> {
-		let email: string
+		let email: string | undefined
 
 		const emailsResponse = await fetch(
 			'https://api.github.com/user/emails',
@@ -39,6 +41,12 @@ export class GithubProvider extends BaseOAuthService {
 			if (primaryEmail) {
 				email = primaryEmail.email
 			}
+		}
+
+		if (!email) {
+			throw new BadRequestException(
+				'Не удалось получить email от GitHub. Убедитесь, что email подтверждён и публичен.'
+			)
 		}
 
 		return super.extractUserInfo({

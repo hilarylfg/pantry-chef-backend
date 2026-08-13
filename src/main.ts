@@ -1,8 +1,8 @@
-import { Logger, ValidationPipe } from '@nestjs/common'
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { RedisStore } from 'connect-redis'
-import { Express } from 'express'
+import type { Express, Request, Response } from 'express'
 import { createClient } from 'redis'
 
 import { AppModule } from './app.module'
@@ -14,7 +14,13 @@ import cookieParser = require('cookie-parser')
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import session = require('express-session')
 
-async function bootstrap() {
+let cachedApp: INestApplication | null = null
+
+async function bootstrap(): Promise<INestApplication> {
+	if (cachedApp) {
+		return cachedApp
+	}
+
 	const logger = new Logger('Bootstrap')
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService)
@@ -79,6 +85,24 @@ async function bootstrap() {
 		})
 	)
 
-	await app.listen(process.env.APPLICATION_PORT ?? 3000)
+	cachedApp = app
+	return app
 }
-bootstrap()
+
+if (process.env.NODE_ENV !== 'production') {
+	void bootstrap()
+		.then(app => {
+			const port = Number(process.env.APPLICATION_PORT) || 3000
+			return app.listen(port)
+		})
+		.catch(err => {
+			console.error('Failed to start server:', err)
+		})
+}
+
+export default async (req: Request, res: Response) => {
+	const app = await bootstrap()
+	const expressApp = app.getHttpAdapter().getInstance() as Express
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	return expressApp(req, res)
+}

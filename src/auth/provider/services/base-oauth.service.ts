@@ -83,7 +83,11 @@ export class BaseOAuthService {
 		}
 
 		const user = await userRequest.json()
-		const userData = await this.extractUserInfo(user)
+		const userData = await this.extractUserInfo({
+			...user,
+			access_token: tokens.access_token,
+			refresh_token: tokens.refresh_token
+		})
 
 		return {
 			...userData,

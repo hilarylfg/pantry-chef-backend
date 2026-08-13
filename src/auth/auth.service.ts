@@ -147,6 +147,27 @@ export class AuthService {
 			return this.saveSession(req, user)
 		}
 
+		// Пользователь с таким email уже есть (например, через credentials) —
+		// привязываем OAuth-аккаунт к существующему пользователю
+		const existingUser = await this.userService.findByEmail(profile.email)
+
+		if (existingUser) {
+			await this.prismaService.account.create({
+				data: {
+					userId: existingUser.id,
+					type: 'oauth',
+					provider: profile.provider,
+					providerAccountId: profile.id,
+					accessToken: profile.access_token,
+					refreshToken: profile.refresh_token,
+					expiresAt: profile.expires_at ?? 0
+				}
+			})
+
+			return this.saveSession(req, existingUser)
+		}
+
+		// Новый пользователь — создаём
 		user = await this.userService.create(
 			profile.email,
 			'',
@@ -165,7 +186,7 @@ export class AuthService {
 				providerAccountId: profile.id,
 				accessToken: profile.access_token,
 				refreshToken: profile.refresh_token,
-				expiresAt: profile.expires_at
+				expiresAt: profile.expires_at ?? 0
 			}
 		})
 

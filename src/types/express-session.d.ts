@@ -1,6 +1,6 @@
-import 'express-session'
+import '@/express-session'
 
-declare module 'express-session' {
+declare module '@/express-session' {
 	interface SessionData {
 		userId?: string
 	}
@@ -13,7 +13,7 @@ declare module 'express-session' {
 declare global {
 	namespace Express {
 		interface Request {
-			session: import('express-session').Session & {
+			session: import('@/express-session').Session & {
 				userId?: string
 			}
 		}

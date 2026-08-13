@@ -151,14 +151,11 @@ export class ProductsService {
 		const offData = (await response.json()) as OffResponse
 
 		if (offData.status === 0 || !offData.product) {
-			throw new NotFoundException(
-				'Продукт с таким штрихкодом не найден'
-			)
+			throw new NotFoundException('Продукт с таким штрихкодом не найден')
 		}
 
 		const offProduct = offData.product
 
-		// Pre-check: если в OFF вообще нет названия — нет смысла звать AI
 		const hasName =
 			offProduct.product_name_ru ||
 			offProduct.product_name ||
