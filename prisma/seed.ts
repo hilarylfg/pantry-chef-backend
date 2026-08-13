@@ -9,7 +9,7 @@ import {
 
 const prisma = new PrismaClient({
 	adapter: new PrismaPg({
-		connectionString: process.env.POSTGRES_URI
+		connectionString: process.env.DATABASE_URL
 	})
 })
 
@@ -31,6 +31,7 @@ async function seedUsers() {
 			email: 'admin@pantrychef.ru',
 			password: passwordHash,
 			displayName: 'Админ PantryChef',
+			picture: 'https://api.dicebear.com/10.x/personas/svg?seed=9rgk6a9v',
 			role: UserRole.ADMIN,
 			isVerified: true,
 			method: AuthMethod.CREDENTIALS
@@ -45,6 +46,7 @@ async function seedUsers() {
 			email: 'anna@pantrychef.ru',
 			password: passwordHash,
 			displayName: 'Анна Соколова',
+			picture: 'https://api.dicebear.com/10.x/personas/svg?seed=4mn7drsq',
 			role: UserRole.REGULAR,
 			isVerified: true,
 			method: AuthMethod.CREDENTIALS

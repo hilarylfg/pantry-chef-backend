@@ -1,15 +1,22 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 
+import { AiService } from '@/ai/ai.service'
+import { gtinEnrichment } from '@/ai/prompts/gtin-enrichment'
+import { GtinProductSchema } from '@/ai/types/ai.schema'
 import { Product } from '@/generated/prisma/client'
 import { ProductSortField, SortOrder } from '@/libs/common/types/product'
 import { PrismaService } from '@/prisma/prisma.service'
 
 import { FindProductsDto } from './dto/find-products.dto'
 import { ConsumeProductDto, ProductDto } from './dto/product.dto'
+import { OffResponse } from './types/off-product.types'
 
 @Injectable()
 export class ProductsService {
-	public constructor(private readonly prismaService: PrismaService) {}
+	public constructor(
+		private readonly prismaService: PrismaService,
+		private readonly aiService: AiService
+	) {}
 
 	public async findAllProducts(
 		userId: string,
@@ -124,6 +131,68 @@ export class ProductsService {
 		return this.prismaService.product.update({
 			where: { id: productId },
 			data: { amount: newAmount }
+		})
+	}
+
+	public async scanBarcode(
+		userId: string,
+		barcode: string
+	): Promise<Product> {
+		const response = await fetch(
+			`https://world.openfoodfacts.net/api/v2/product/${barcode}`
+		)
+
+		if (!response.ok) {
+			throw new NotFoundException('Штрихкод не найден')
+		}
+
+		const offData = (await response.json()) as OffResponse
+
+		if (offData.status === 0 || !offData.product) {
+			throw new NotFoundException(
+				'Продукт с таким штрихкодом не найден'
+			)
+		}
+
+		const offProduct = offData.product
+
+		// Pre-check: если в OFF вообще нет названия — нет смысла звать AI
+		const hasName =
+			offProduct.product_name_ru ||
+			offProduct.product_name ||
+			offProduct.generic_name
+
+		if (!hasName) {
+			throw new NotFoundException(
+				'Продукт найден, но данные о нём отсутствуют в базе. Добавьте вручную.'
+			)
+		}
+
+		let product
+
+		try {
+			product = await this.aiService.generateStructured(
+				JSON.stringify(offProduct),
+				GtinProductSchema,
+				{
+					systemPrompt: gtinEnrichment,
+					temperature: 0
+				}
+			)
+		} catch {
+			throw new NotFoundException(
+				'Не удалось распознать продукт по штрихкоду. Добавьте вручную.'
+			)
+		}
+
+		return this.prismaService.product.create({
+			data: {
+				name: product.name,
+				category: product.category,
+				amount: product.amount,
+				unit: product.unit,
+				userId
+			}
 		})
 	}
 

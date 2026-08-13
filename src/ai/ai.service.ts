@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { generateText, Output, streamText } from 'ai'
+import { type z } from 'zod'
 
-import { RecipesSchema } from '@/ai/types/ai.schema'
 import {
 	DEFAULT_CHAT_MODEL,
 	DEFAULT_RECIPE_MODEL,
@@ -28,20 +28,23 @@ export class AiService {
 		})
 	}
 
-	public async generateRecipe(
+	public async generateStructured<T>(
 		userPrompt: string,
-		model = DEFAULT_RECIPE_MODEL,
-		systemPrompt = RECIPE_SYSTEM_PROMPT,
-		temperature = DEFAULT_TEMPERATURE
-	) {
+		outputSchema: z.ZodType<T>,
+		options?: {
+			model?: string
+			systemPrompt?: string
+			temperature?: number
+		}
+	): Promise<T> {
 		const { output } = await generateText({
-			model: this.openrouter(model),
-			output: Output.object({ schema: RecipesSchema }),
-			instructions: systemPrompt,
+			model: this.openrouter(options?.model ?? DEFAULT_RECIPE_MODEL),
+			output: Output.object({ schema: outputSchema }),
+			instructions: options?.systemPrompt ?? RECIPE_SYSTEM_PROMPT,
 			messages: [{ role: 'user', content: userPrompt }],
-			temperature
+			temperature: options?.temperature ?? DEFAULT_TEMPERATURE
 		})
 
-		return output.recipes
+		return output
 	}
 }

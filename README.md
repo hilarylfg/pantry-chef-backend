@@ -227,10 +227,14 @@ APPLICATION_PORT=4000
 ALLOWED_ORIGINS=http://localhost:3000
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/pantry_chef
+DATABASE_URL=postgres://postgres:123456@localhost:5433/pantry-chef
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=123456
+POSTGRES_DB='pantry-chef'
 
 # Redis
 REDIS_URI=redis://localhost:6379
+REDIS_PASSWORD=password
 SESSION_FOLDER=pantry-chef:sess:
 
 # Session

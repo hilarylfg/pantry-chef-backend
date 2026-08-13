@@ -81,6 +81,13 @@ export const RecipesSchema = z.object({
 	recipes: z.array(LLMRecipeSchema)
 })
 
+export const GtinProductSchema = z.object({
+	name: z.string().min(1, 'Название не должно быть пустым'),
+	category: ProductCategoryEnum,
+	amount: z.number().positive(),
+	unit: UnitEnum
+})
+
 export const VisionResultSchema = z.object({
 	products: z.array(RecognizedProductSchema).min(0)
 })

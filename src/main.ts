@@ -20,7 +20,8 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService)
 	const redis = createClient({
-		url: config.getOrThrow('REDIS_URI')
+		url: config.getOrThrow('REDIS_URI'),
+		password: config.getOrThrow<string>('REDIS_PASSWORD')
 	})
 	redis.on('error', err => {
 		console.error('Redis connection error:', err)

@@ -19,7 +19,7 @@ export const getMailerConfig = (
 			connectionTimeout: 10000
 		},
 		defaults: {
-			from: `"Bot4You Team" <${configService.getOrThrow<string>('MAIL_FROM')}>`
+			from: `"PantryChef" <${configService.getOrThrow<string>('MAIL_FROM')}>`
 		}
 	}
 }

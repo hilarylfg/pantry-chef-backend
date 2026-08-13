@@ -5,6 +5,7 @@ import {
 	buildRecipeUserPrompt,
 	RecipeConstraints
 } from '@/ai/prompts/build-recipe-prompt'
+import { RecipesSchema } from '@/ai/types/ai.schema'
 import { Recipe } from '@/generated/prisma/client'
 import { RecipeSortField, SortOrder } from '@/libs/common/types/product'
 import { PrismaService } from '@/prisma/prisma.service'
@@ -64,7 +65,10 @@ export class RecipesService {
 		}
 
 		const userPrompt = buildRecipeUserPrompt(products, constraints)
-		const recipes = await this.aiService.generateRecipe(userPrompt)
+		const { recipes } = await this.aiService.generateStructured(
+			userPrompt,
+			RecipesSchema
+		)
 
 		await Promise.all(
 			recipes.map(recipe =>
@@ -106,8 +110,6 @@ export class RecipesService {
 			}
 		})
 	}
-
-
 
 	private buildOrderBy(sort?: RecipeSortField, order?: SortOrder): any {
 		if (!sort || !order) return { createdAt: 'desc' }

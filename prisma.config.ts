@@ -1,5 +1,12 @@
-import 'dotenv/config'
-import { defineConfig, env } from 'prisma/config'
+import 'dotenv/config';
+import { defineConfig, env } from 'prisma/config';
+
+
+
+
+
+
+
 
 export default defineConfig({
 	schema: 'prisma/schema.prisma',
@@ -8,6 +15,6 @@ export default defineConfig({
 		seed: 'bun prisma/seed.ts'
 	},
 	datasource: {
-		url: env('POSTGRES_URI')
+		url: env('DATABASE_URL')
 	}
 })

@@ -96,11 +96,11 @@ export class ProductsController {
 
 	@Authorization()
 	@HttpCode(HttpStatus.OK)
-	@Post('/scan-barcode')
+	@Get('/barcode/:barcode')
 	public async scanBarcode(
 		@Authorized('id') userId: string,
-		@Body() dto: BarcodeDto
+		@Param('barcode') barcode: string
 	) {
-		return this.productsService.scanBarcode(userId, dto)
+		return this.productsService.scanBarcode(userId, barcode)
 	}
 }
