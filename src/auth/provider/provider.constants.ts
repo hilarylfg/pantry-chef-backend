@@ -1,6 +1,6 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common'
 
-import { BaseOAuthService } from './services/base-oauth.service'
+import { BaseOAuthService } from './services/base-oauth.service.js'
 
 export const ProviderOptionsSymbol = Symbol()
 

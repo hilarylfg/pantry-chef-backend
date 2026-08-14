@@ -1,6 +1,9 @@
 import { z } from 'zod'
 
-import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from '../../libs/common/types/product'
+import {
+	PRODUCT_CATEGORIES,
+	PRODUCT_UNITS
+} from '../../libs/common/types/product.js'
 
 export const ProductCategoryEnum = z.enum(PRODUCT_CATEGORIES)
 

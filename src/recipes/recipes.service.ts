@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common'
 
-import { AiService } from '../ai/ai.service'
+import { AiService } from '../ai/ai.service.js'
 import {
 	buildRecipeUserPrompt,
 	RecipeConstraints
-} from '../ai/prompts/build-recipe-prompt'
-import { RecipesSchema } from '../ai/types/ai.schema'
-import { Recipe } from '../generated/prisma/client'
-import { RecipeSortField, SortOrder } from '../libs/common/types/product'
-import { PrismaService } from '../prisma/prisma.service'
-import { FindRecipesDto } from './dto/find-recipes.dto'
-import { GenerateRecipeDto } from './dto/generate-recipe.dto'
-import { UpdateRecipeDto } from './dto/update-recipe.dto'
+} from '../ai/prompts/build-recipe-prompt.js'
+import { RecipesSchema } from '../ai/types/ai.schema.js'
+import { Recipe } from '../generated/prisma/client.js'
+import { RecipeSortField, SortOrder } from '../libs/common/types/product.js'
+import { PrismaService } from '../prisma/prisma.service.js'
+
+import { FindRecipesDto } from './dto/find-recipes.dto.js'
+import { GenerateRecipeDto } from './dto/generate-recipe.dto.js'
+import { UpdateRecipeDto } from './dto/update-recipe.dto.js'
 
 @Injectable()
 export class RecipesService {
@@ -52,9 +53,9 @@ export class RecipesService {
 		})
 
 		const constraints: RecipeConstraints = {
-			maxTimeMinutes: dto.maxTimeMinutes!,
-			difficulty: dto.difficulty!,
-			mealType: dto.mealType!,
+			maxTimeMinutes: dto.maxTimeMinutes,
+			difficulty: dto.difficulty,
+			mealType: dto.mealType,
 			servings: dto.servings,
 			cuisine: dto.cuisine,
 			diet: dto.diet,

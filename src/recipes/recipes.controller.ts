@@ -10,13 +10,13 @@ import {
 	Post
 } from '@nestjs/common'
 
-import { Authorization } from '../auth/decorators/auth.decorator'
-import { Authorized } from '../auth/decorators/authorized.decorator'
-import { FindRecipesDto } from './dto/find-recipes.dto'
-import { GenerateRecipeDto } from './dto/generate-recipe.dto'
-import { UpdateRecipeDto } from './dto/update-recipe.dto'
+import { Authorization } from '../auth/decorators/auth.decorator.js'
+import { Authorized } from '../auth/decorators/authorized.decorator.js'
 
-import { RecipesService } from './recipes.service'
+import { FindRecipesDto } from './dto/find-recipes.dto.js'
+import { GenerateRecipeDto } from './dto/generate-recipe.dto.js'
+import { UpdateRecipeDto } from './dto/update-recipe.dto.js'
+import { RecipesService } from './recipes.service.js'
 
 @Controller('recipes')
 export class RecipesController {

@@ -1,4 +1,4 @@
-import { TypeProviderOptions } from './provider-options.types'
+import { TypeProviderOptions } from './provider-options.types.js'
 
 export type TypeBaseProviderOptions = TypeProviderOptions & {
 	name: string

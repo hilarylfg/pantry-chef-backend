@@ -10,16 +10,17 @@ import { ConfigService } from '@nestjs/config'
 import { verify } from 'argon2'
 import { Request, Response } from 'express'
 
-import { PrismaClient, User } from '../generated/prisma/client'
-import { AuthMethod } from '../generated/prisma/enums'
-import { PrismaService } from '../prisma/prisma.service'
-import { UserService } from '../user/user.service'
+import { PrismaClient } from '../generated/prisma/client.js'
+import { AuthMethod } from '../generated/prisma/enums.js'
+import { PrismaService } from '../prisma/prisma.service.js'
+import { UserService } from '../user/user.service.js'
 
-import { LoginDto } from './dto/login.dto'
-import { RegisterDto } from './dto/register.dto'
-import { EmailConfirmationService } from './email-confirmation/email-confirmation.service'
-import { ProviderService } from './provider/provider.service'
-import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service'
+import { LoginDto } from './dto/login.dto.js'
+import { RegisterDto } from './dto/register.dto.js'
+import { EmailConfirmationService } from './email-confirmation/email-confirmation.service.js'
+import { ProviderService } from './provider/provider.service.js'
+import { SessionService } from './session.service.js'
+import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service.js'
 
 @Injectable()
 export class AuthService {
@@ -31,7 +32,8 @@ export class AuthService {
 		private readonly configService: ConfigService,
 		private readonly providerService: ProviderService,
 		private readonly emailConfirmationService: EmailConfirmationService,
-		private readonly twoFactorAuthService: TwoFactorAuthService
+		private readonly twoFactorAuthService: TwoFactorAuthService,
+		private readonly sessionService: SessionService
 	) {}
 
 	public async register(dto: RegisterDto) {
@@ -119,7 +121,7 @@ export class AuthService {
 			)
 		}
 
-		return this.saveSession(req, user)
+		return this.sessionService.saveSession(req, user)
 	}
 
 	public async extractProfileFromCode(
@@ -144,7 +146,7 @@ export class AuthService {
 			: null
 
 		if (user) {
-			return this.saveSession(req, user)
+			return this.sessionService.saveSession(req, user)
 		}
 
 		// Пользователь с таким email уже есть (например, через credentials) —
@@ -164,7 +166,7 @@ export class AuthService {
 				}
 			})
 
-			return this.saveSession(req, existingUser)
+			return this.sessionService.saveSession(req, existingUser)
 		}
 
 		// Новый пользователь — создаём
@@ -190,7 +192,7 @@ export class AuthService {
 			}
 		})
 
-		return this.saveSession(req, user)
+		return this.sessionService.saveSession(req, user)
 	}
 
 	public async logout(req: Request, res: Response): Promise<void> {
@@ -207,26 +209,6 @@ export class AuthService {
 					this.configService.getOrThrow<string>('SESSION_NAME')
 				)
 				resolve()
-			})
-		})
-	}
-
-	public async saveSession(req: Request, user: User) {
-		return new Promise((resolve, reject) => {
-			req.session.userId = user.id
-
-			req.session.save(err => {
-				if (err) {
-					return reject(
-						new InternalServerErrorException(
-							'Не удалось сохранить сессию. Проверьте, правильно ли настроены параметры сессии.'
-						)
-					)
-				}
-
-				resolve({
-					user
-				})
 			})
 		})
 	}

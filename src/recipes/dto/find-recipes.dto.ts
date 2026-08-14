@@ -6,7 +6,7 @@ import {
 	RecipeSortField,
 	SORT_ORDERS,
 	SortOrder
-} from '../../libs/common/types/product'
+} from '../../libs/common/types/product.js'
 
 export class FindRecipesDto {
 	@IsOptional()

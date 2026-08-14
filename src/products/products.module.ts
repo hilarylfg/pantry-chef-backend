@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 
-import { AiModule } from '../ai/ai.module'
-import { UserModule } from '../user/user.module'
+import { AiModule } from '../ai/ai.module.js'
+import { UserModule } from '../user/user.module.js'
 
-import { ProductsController } from './products.controller'
-import { ProductsService } from './products.service'
+import { ProductsController } from './products.controller.js'
+import { ProductsService } from './products.service.js'
 
 @Module({
 	controllers: [ProductsController],

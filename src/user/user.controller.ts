@@ -8,12 +8,12 @@ import {
 	Patch
 } from '@nestjs/common'
 
-import { Authorization } from '../auth/decorators/auth.decorator'
-import { Authorized } from '../auth/decorators/authorized.decorator'
-import { UserRole } from '../generated/prisma/client'
+import { Authorization } from '../auth/decorators/auth.decorator.js'
+import { Authorized } from '../auth/decorators/authorized.decorator.js'
+import { UserRole } from '../generated/prisma/client.js'
 
-import { UpdateUserDto } from './dto/update-user.dto'
-import { UserService } from './user.service'
+import { UpdateUserDto } from './dto/update-user.dto.js'
+import { UserService } from './user.service.js'
 
 @Controller('users')
 export class UserController {

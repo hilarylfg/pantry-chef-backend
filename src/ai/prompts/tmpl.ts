@@ -9,7 +9,11 @@ export function tmpl(
 		if (i < values.length) {
 			const v = values[i]
 			if (v == null) continue
-			out += Array.isArray(v) ? v.join('\n') : String(v)
+			out += Array.isArray(v)
+				? v.join('\n')
+				: typeof v === 'string'
+					? v
+					: JSON.stringify(v)
 		}
 	}
 

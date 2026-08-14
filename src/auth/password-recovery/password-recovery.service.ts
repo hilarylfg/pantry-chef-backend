@@ -6,13 +6,13 @@ import {
 import { hash } from 'argon2'
 import { randomUUID } from 'node:crypto'
 
-import { TokenType } from '../../generated/prisma/enums'
-import { MailService } from '../../libs/mail/mail.service'
-import { PrismaService } from '../../prisma/prisma.service'
-import { UserService } from '../../user/user.service'
+import { TokenType } from '../../generated/prisma/enums.js'
+import { MailService } from '../../libs/mail/mail.service.js'
+import { PrismaService } from '../../prisma/prisma.service.js'
+import { UserService } from '../../user/user.service.js'
 
-import { NewPasswordDto } from './dto/new-password.dto'
-import { ResetPasswordDto } from './dto/reset-password.dto'
+import { NewPasswordDto } from './dto/new-password.dto.js'
+import { ResetPasswordDto } from './dto/reset-password.dto.js'
 
 @Injectable()
 export class PasswordRecoveryService {

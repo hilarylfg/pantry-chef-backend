@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
-import { UserModule } from '../user/user.module'
+import { UserModule } from '../user/user.module.js'
 
-import { AiController } from './ai.controller'
-import { AiService } from './ai.service'
-import { OpenRouterProvider } from './providers/openrouter'
-import { VisionService } from './vision.service'
+import { AiController } from './ai.controller.js'
+import { AiService } from './ai.service.js'
+import { OpenRouterProvider } from './providers/openrouter.js'
+import { VisionService } from './vision.service.js'
 
 @Module({
 	imports: [ConfigModule, UserModule],

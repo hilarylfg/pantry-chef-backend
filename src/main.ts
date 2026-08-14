@@ -2,17 +2,14 @@ import { INestApplication, Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { RedisStore } from 'connect-redis'
+import cookieParser from 'cookie-parser'
 import type { Express, Request, Response } from 'express'
+import session from 'express-session'
 import { createClient } from 'redis'
 
-import { AppModule } from './app.module'
-import { ms, StringValue } from './libs/common/utils/ms.util'
-import { parseBoolean } from './libs/common/utils/parse-boolean.util'
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import cookieParser = require('cookie-parser')
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import session = require('express-session')
+import { AppModule } from './app.module.js'
+import { ms, StringValue } from './libs/common/utils/ms.util.js'
+import { parseBoolean } from './libs/common/utils/parse-boolean.util.js'
 
 let cachedApp: INestApplication | null = null
 

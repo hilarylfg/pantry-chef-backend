@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common'
 
-import { BaseOAuthService } from './base-oauth.service'
-import { TypeProviderOptions } from './types/provider-options.types'
-import { TypeUserInfo } from './types/user-info.types'
+import { BaseOAuthService } from './base-oauth.service.js'
+import { TypeProviderOptions } from './types/provider-options.types.js'
+import { TypeUserInfo } from './types/user-info.types.js'
 
 export class GithubProvider extends BaseOAuthService {
 	public constructor(options: TypeProviderOptions) {
@@ -30,12 +30,12 @@ export class GithubProvider extends BaseOAuthService {
 		)
 
 		if (emailsResponse.ok) {
-			const emails: {
+			const emails = (await emailsResponse.json()) as {
 				email: string
 				primary: boolean
 				verified: boolean
 				visibility: string | null
-			}[] = await emailsResponse.json()
+			}[]
 			const primaryEmail = emails.find(e => e.primary && e.verified)
 
 			if (primaryEmail) {
@@ -91,6 +91,8 @@ interface GitHubProfile extends Record<string, unknown> {
 	following: number
 	created_at: string
 	updated_at: string
+	access_token: string
+	refresh_token?: string
 	private_gists: number
 	total_private_repos: number
 	owned_private_repos: number

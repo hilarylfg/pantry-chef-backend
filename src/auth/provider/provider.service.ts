@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common'
 
-import { ProviderOptionsSymbol, TypeOptions } from './provider.constants'
-import { BaseOAuthService } from './services/base-oauth.service'
+import { ProviderOptionsSymbol, TypeOptions } from './provider.constants.js'
+import { BaseOAuthService } from './services/base-oauth.service.js'
 
 @Injectable()
 export class ProviderService implements OnModuleInit {

@@ -1,6 +1,7 @@
-import { Product } from '../../generated/prisma/client'
+import { Product } from '../../generated/prisma/client.js'
 
-import { tmpl } from './tmpl'
+import { daysLeft } from './days-left.js'
+import { tmpl } from './tmpl.js'
 
 export interface ExpiryAlertConstraints {
 	maxExpiryDays: number
@@ -13,7 +14,8 @@ export function buildExpiryAlertUserPrompt(
 	otherProducts?: Product[]
 ): string {
 	const expiringLines = expiringProducts.map(p => {
-		return `- ${p.name}: ${p.amount} ${p.unit} (осталось ${p.expiryDate} дней)`
+		const days = p.expiryDate ? daysLeft(p.expiryDate) : 0
+		return `- ${p.name}: ${p.amount} ${p.unit} (осталось ${days} дней)`
 	})
 
 	const otherLines = otherProducts?.length

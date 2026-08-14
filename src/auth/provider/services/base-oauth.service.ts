@@ -4,8 +4,15 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 
-import { TypeBaseProviderOptions } from './types/base-provider-options.types'
-import { TypeUserInfo } from './types/user-info.types'
+import { TypeBaseProviderOptions } from './types/base-provider-options.types.js'
+import { TypeUserInfo } from './types/user-info.types.js'
+
+interface OAuthTokens {
+	access_token: string
+	refresh_token?: string
+	expires_at?: number
+	expires_in?: number
+}
 
 @Injectable()
 export class BaseOAuthService {
@@ -13,9 +20,9 @@ export class BaseOAuthService {
 
 	public constructor(private readonly options: TypeBaseProviderOptions) {}
 
-	protected async extractUserInfo(
+	protected extractUserInfo(
 		data: Record<string, unknown>
-	): Promise<TypeUserInfo> {
+	): TypeUserInfo | Promise<TypeUserInfo> {
 		return {
 			...data,
 			provider: this.options.name
@@ -62,7 +69,7 @@ export class BaseOAuthService {
 			)
 		}
 
-		const tokens = await tokensRequest.json()
+		const tokens = (await tokensRequest.json()) as OAuthTokens
 
 		if (!tokens.access_token) {
 			throw new BadRequestException(
@@ -82,7 +89,7 @@ export class BaseOAuthService {
 			)
 		}
 
-		const user = await userRequest.json()
+		const user = (await userRequest.json()) as Record<string, unknown>
 		const userData = await this.extractUserInfo({
 			...user,
 			access_token: tokens.access_token,

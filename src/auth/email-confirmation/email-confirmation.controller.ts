@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common'
 import { Request } from 'express'
 
-import { ConfirmationDto } from './dto/confirmation.dto'
-import { EmailConfirmationService } from './email-confirmation.service'
+import { ConfirmationDto } from './dto/confirmation.dto.js'
+import { EmailConfirmationService } from './email-confirmation.service.js'
 
 @Controller('auth/email-confirmation')
 export class EmailConfirmationController {

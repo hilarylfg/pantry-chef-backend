@@ -1,6 +1,7 @@
-import { Product } from '../../generated/prisma/client'
+import { Product } from '../../generated/prisma/client.js'
 
-import { tmpl } from './tmpl'
+import { daysLeft } from './days-left.js'
+import { tmpl } from './tmpl.js'
 
 export interface RecipeConstraints {
 	maxTimeMinutes: number
@@ -25,7 +26,7 @@ export function buildRecipeUserPrompt(
 		let line = `- ${p.name}: ${p.amount} ${p.unit}`
 
 		if (p.expiryDate) {
-			line += ` (срок годности истекает через ${p.expiryDate} дней — используй в первую очередь)`
+			line += ` (срок годности истекает через ${daysLeft(p.expiryDate)} дней — используй в первую очередь)`
 		}
 
 		return line

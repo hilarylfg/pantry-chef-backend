@@ -1,4 +1,4 @@
-import { tmpl } from './tmpl'
+import { tmpl } from './tmpl.js'
 
 export interface ShoppingItem {
 	name: string
@@ -17,7 +17,7 @@ export function buildShoppingListUserPrompt(
 	constraints: ShoppingListConstraints,
 	pantryItems?: ShoppingItem[]
 ): string {
-	const neededLines = neededItems.map((n) => {
+	const neededLines = neededItems.map(n => {
 		let line = `- ${n.name}: ${n.amount} ${n.unit}`
 		if (n.forRecipe) {
 			line += ` (для рецепта: ${n.forRecipe})`
@@ -26,7 +26,12 @@ export function buildShoppingListUserPrompt(
 	})
 
 	const pantryLines = pantryItems?.length
-		? ['', 'Уже есть в холодильнике:', ...pantryItems.map((p) => `- ${p.name}: ${p.amount} ${p.unit}`), '']
+		? [
+				'',
+				'Уже есть в холодильнике:',
+				...pantryItems.map(p => `- ${p.name}: ${p.amount} ${p.unit}`),
+				''
+			]
 		: null
 
 	const recipeNames = constraints.recipes.join(', ')

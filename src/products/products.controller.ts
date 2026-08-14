@@ -11,12 +11,12 @@ import {
 	Query
 } from '@nestjs/common'
 
-import { Authorization } from '../auth/decorators/auth.decorator'
-import { Authorized } from '../auth/decorators/authorized.decorator'
-import { FindProductsDto } from './dto/find-products.dto'
-import { ConsumeProductDto, ProductDto } from './dto/product.dto'
+import { Authorization } from '../auth/decorators/auth.decorator.js'
+import { Authorized } from '../auth/decorators/authorized.decorator.js'
 
-import { ProductsService } from './products.service'
+import { FindProductsDto } from './dto/find-products.dto.js'
+import { ConsumeProductDto, ProductDto } from './dto/product.dto.js'
+import { ProductsService } from './products.service.js'
 
 @Controller('products')
 export class ProductsController {

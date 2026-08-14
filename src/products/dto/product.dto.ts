@@ -1,16 +1,16 @@
-import { IsIn, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+	IsIn,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	IsString,
+	Min
+} from 'class-validator'
 
-
-
-import { PRODUCT_CATEGORIES, PRODUCT_UNITS } from '../../libs/common/types/product';
-
-
-
-
-
-
-
-
+import {
+	PRODUCT_CATEGORIES,
+	PRODUCT_UNITS
+} from '../../libs/common/types/product.js'
 
 export class ProductDto {
 	@IsString({ message: 'Название должно быть строкой.' })

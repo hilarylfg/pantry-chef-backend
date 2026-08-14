@@ -3,9 +3,9 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { render } from '@react-email/components'
 
-import { ConfirmationTemplate } from './templates/confirmation.template'
-import { ResetPasswordTemplate } from './templates/reset-password.template'
-import { TwoFactorAuthTemplate } from './templates/two-factor-auth.template'
+import { ConfirmationTemplate } from './templates/confirmation.template.js'
+import { ResetPasswordTemplate } from './templates/reset-password.template.js'
+import { TwoFactorAuthTemplate } from './templates/two-factor-auth.template.js'
 
 @Injectable()
 export class MailService {
@@ -53,7 +53,6 @@ export class MailService {
 		})
 	}
 
-	// Checking for resend.com
 	public async sendTestEmail(email: string) {
 		const apiKey = this.configService.getOrThrow<string>('MAIL_PASSWORD')
 
@@ -66,12 +65,12 @@ export class MailService {
 					}
 				})
 			} catch (err) {
-					this.logger.warn(
-						'Failed to check contact on Resend (network):',
-						err
-					)
-					return null
-				}
+				this.logger.warn(
+					'Failed to check contact on Resend (network):',
+					err
+				)
+				return null
+			}
 		}
 
 		try {
@@ -132,10 +131,7 @@ export class MailService {
 
 			return true
 		} catch (err) {
-			this.logger.warn(
-				'Failed to check/create contact on Resend:',
-				err
-			)
+			this.logger.warn('Failed to check/create contact on Resend:', err)
 			return false
 		}
 	}

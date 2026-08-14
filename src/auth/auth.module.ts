@@ -1,15 +1,16 @@
-import { forwardRef, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
-import { getProvidersConfig } from '../config/providers.config'
-import { MailService } from '../libs/mail/mail.service'
-import { UserModule } from '../user/user.module'
+import { getProvidersConfig } from '../config/providers.config.js'
+import { MailService } from '../libs/mail/mail.service.js'
+import { UserModule } from '../user/user.module.js'
 
-import { AuthController } from './auth.controller'
-import { AuthService } from './auth.service'
-import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module'
-import { ProviderModule } from './provider/provider.module'
-import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service'
+import { AuthController } from './auth.controller.js'
+import { AuthService } from './auth.service.js'
+import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module.js'
+import { ProviderModule } from './provider/provider.module.js'
+import { SessionService } from './session.service.js'
+import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service.js'
 
 @Module({
 	imports: [
@@ -19,10 +20,10 @@ import { TwoFactorAuthService } from './two-factor-auth/two-factor-auth.service'
 			useFactory: getProvidersConfig,
 			inject: [ConfigService]
 		}),
-		forwardRef(() => EmailConfirmationModule)
+		EmailConfirmationModule
 	],
 	controllers: [AuthController],
-	providers: [AuthService, MailService, TwoFactorAuthService],
+	providers: [AuthService, MailService, SessionService, TwoFactorAuthService],
 	exports: [AuthService]
 })
 export class AuthModule {}

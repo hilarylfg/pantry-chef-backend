@@ -5,7 +5,7 @@ import {
 	AuthMethod,
 	PrismaClient,
 	UserRole
-} from '../src/generated/prisma/client'
+} from '../src/generated/prisma/client.js'
 
 const prisma = new PrismaClient({
 	adapter: new PrismaPg({

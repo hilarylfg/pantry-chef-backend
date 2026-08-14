@@ -1,15 +1,16 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { z } from 'zod'
 
-import { AiService } from '../ai/ai.service'
-import { gtinEnrichment } from '../ai/prompts/gtin-enrichment'
-import { GtinProductSchema } from '../ai/types/ai.schema'
-import { Product } from '../generated/prisma/client'
-import { ProductSortField, SortOrder } from '../libs/common/types/product'
-import { PrismaService } from '../prisma/prisma.service'
+import { AiService } from '../ai/ai.service.js'
+import { gtinEnrichment } from '../ai/prompts/gtin-enrichment.js'
+import { GtinProductSchema } from '../ai/types/ai.schema.js'
+import { Product } from '../generated/prisma/client.js'
+import { ProductSortField, SortOrder } from '../libs/common/types/product.js'
+import { PrismaService } from '../prisma/prisma.service.js'
 
-import { FindProductsDto } from './dto/find-products.dto'
-import { ConsumeProductDto, ProductDto } from './dto/product.dto'
-import { OffResponse } from './types/off-product.types'
+import { FindProductsDto } from './dto/find-products.dto.js'
+import { ConsumeProductDto, ProductDto } from './dto/product.dto.js'
+import { OffResponse } from './types/off-product.types.js'
 
 @Injectable()
 export class ProductsService {
@@ -167,7 +168,7 @@ export class ProductsService {
 			)
 		}
 
-		let product
+		let product: z.infer<typeof GtinProductSchema>
 
 		try {
 			product = await this.aiService.generateStructured(

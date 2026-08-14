@@ -4,8 +4,8 @@ import {
 	ProviderOptionsSymbol,
 	TypeAsyncOptions,
 	TypeOptions
-} from './provider.constants'
-import { ProviderService } from './provider.service'
+} from './provider.constants.js'
+import { ProviderService } from './provider.service.js'
 
 @Module({})
 export class ProviderModule {

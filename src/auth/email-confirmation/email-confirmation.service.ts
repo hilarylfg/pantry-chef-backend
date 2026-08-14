@@ -1,21 +1,18 @@
 import {
 	BadRequestException,
-	forwardRef,
-	Inject,
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
 import { Request } from 'express'
 import { randomUUID } from 'node:crypto'
 
-import { TokenType } from '../../generated/prisma/client'
-import { MailService } from '../../libs/mail/mail.service'
-import { PrismaService } from '../../prisma/prisma.service'
-import { UserService } from '../../user/user.service'
+import { TokenType } from '../../generated/prisma/client.js'
+import { MailService } from '../../libs/mail/mail.service.js'
+import { PrismaService } from '../../prisma/prisma.service.js'
+import { UserService } from '../../user/user.service.js'
+import { SessionService } from '../session.service.js'
 
-import { AuthService } from '../auth.service'
-
-import { ConfirmationDto } from './dto/confirmation.dto'
+import { ConfirmationDto } from './dto/confirmation.dto.js'
 
 @Injectable()
 export class EmailConfirmationService {
@@ -23,8 +20,7 @@ export class EmailConfirmationService {
 		private readonly prismaService: PrismaService,
 		private readonly mailService: MailService,
 		private readonly userService: UserService,
-		@Inject(forwardRef(() => AuthService))
-		private readonly authService: AuthService
+		private readonly sessionService: SessionService
 	) {}
 
 	public async newVerification(req: Request, dto: ConfirmationDto) {
@@ -75,7 +71,7 @@ export class EmailConfirmationService {
 			}
 		})
 
-		return this.authService.saveSession(req, existingUser)
+		return this.sessionService.saveSession(req, existingUser)
 	}
 
 	public async sendVerificationToken(email: string) {
