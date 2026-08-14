@@ -6,7 +6,7 @@ import {
 	NotFoundException
 } from '@nestjs/common'
 import { Request } from 'express'
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'node:crypto'
 
 import { TokenType } from '../../generated/prisma/client'
 import { MailService } from '../../libs/mail/mail.service'
@@ -93,7 +93,7 @@ export class EmailConfirmationService {
 	}
 
 	private async generateVerificationToken(email: string) {
-		const token = uuidv4()
+		const token = randomUUID()
 		const expiresIn = new Date(new Date().getTime() + 3600 * 1000)
 
 		const existingToken = await this.prismaService.token.findFirst({
