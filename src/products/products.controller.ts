@@ -44,6 +44,16 @@ export class ProductsController {
 
 	@Authorization()
 	@HttpCode(HttpStatus.OK)
+	@Get('expiring')
+	public async expiringSoonProducts(
+		@Authorized('id') userId: string,
+		@Query('days') days: string = '3'
+	) {
+		return this.productsService.expiringSoonProducts(userId, days)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
 	@Get(':productId')
 	public async findProductById(
 		@Authorized('id') userId: string,
@@ -75,16 +85,6 @@ export class ProductsController {
 
 	@Authorization()
 	@HttpCode(HttpStatus.OK)
-	@Get('expiring')
-	public async expiringSoonProducts(
-		@Authorized('id') userId: string,
-		@Query() days = '3'
-	) {
-		return this.productsService.expiringSoonProducts(userId, days)
-	}
-
-	@Authorization()
-	@HttpCode(HttpStatus.OK)
 	@Post(':productId/consume')
 	public async consumeProduct(
 		@Authorized('id') userId: string,
@@ -96,7 +96,7 @@ export class ProductsController {
 
 	@Authorization()
 	@HttpCode(HttpStatus.OK)
-	@Get('/barcode/:barcode')
+	@Get('barcode/:barcode')
 	public async scanBarcode(
 		@Authorized('id') userId: string,
 		@Param('barcode') barcode: string

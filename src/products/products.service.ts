@@ -103,12 +103,18 @@ export class ProductsService {
 		userId: string,
 		days: string
 	): Promise<Product[]> {
+		// days приходит из query-строки: некорректное значение → дефолт 3,
+		// иначе NaN превратится в Invalid Date и запрос упадет.
+		const horizonDays = Number.isFinite(Number(days))
+			? Math.min(Math.max(Number(days), 0), 365)
+			: 3
+
 		return this.prismaService.product.findMany({
 			where: {
 				userId,
 				expiryDate: {
 					gte: new Date(),
-					lte: new Date(Date.now() + Number(days) * 86400000)
+					lte: new Date(Date.now() + horizonDays * 86400000)
 				}
 			}
 		})
