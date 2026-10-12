@@ -12,7 +12,6 @@ export function createOllamaClient(config: ConfigService): OllamaClient {
 
 	const ollama = createOllama({
 		baseURL: config.get<string>('OLLAMA_BASE_URL'),
-
 		fetch: async (
 			input: string | URL | Request,
 			init?: RequestInit
@@ -38,5 +37,5 @@ export function createOllamaClient(config: ConfigService): OllamaClient {
 		}
 	})
 
-	return (modelId: string) => ollama(modelId) as unknown as OllamaClient
+	return (modelId: string) => ollama(modelId)
 }
