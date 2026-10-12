@@ -1,9 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+	Inject,
+	Injectable,
+	InternalServerErrorException,
+	Logger
+} from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { generateText, Output, streamText } from 'ai'
 import { type z } from 'zod'
 
 import { StreamDto } from './dto/chat.dto.js'
-import { OPENROUTER_CLIENT, OpenRouterClient } from './providers/openrouter.js'
+import { AI_CLIENT, AiClient } from './providers/ai-client.js'
 import {
 	DEFAULT_CHAT_MODEL,
 	DEFAULT_RECIPE_MODEL,
@@ -13,14 +19,21 @@ import { RECIPE_SYSTEM_PROMPT } from './types/prompts.js'
 
 @Injectable()
 export class AiService {
+	private readonly logger = new Logger(AiService.name)
+
 	constructor(
-		@Inject(OPENROUTER_CLIENT)
-		private readonly openrouter: OpenRouterClient
+		@Inject(AI_CLIENT)
+		private readonly aiClient: AiClient,
+		private readonly configService: ConfigService
 	) {}
 
 	public streamChat(dto: StreamDto): ReturnType<typeof streamText> {
 		return streamText({
-			model: this.openrouter(dto.model ?? DEFAULT_CHAT_MODEL),
+			model: this.aiClient(
+				dto.model ??
+					this.configService.get<string>('AI_CHAT_MODEL') ??
+					DEFAULT_CHAT_MODEL
+			),
 			messages: [{ role: 'user', content: dto.prompt }],
 			temperature: dto.temperature ?? DEFAULT_TEMPERATURE
 		})
@@ -35,14 +48,43 @@ export class AiService {
 			temperature?: number
 		}
 	): Promise<T> {
-		const { output } = await generateText({
-			model: this.openrouter(options?.model ?? DEFAULT_RECIPE_MODEL),
-			output: Output.object({ schema: outputSchema }),
-			instructions: options?.systemPrompt ?? RECIPE_SYSTEM_PROMPT,
-			messages: [{ role: 'user', content: userPrompt }],
-			temperature: options?.temperature ?? DEFAULT_TEMPERATURE
-		})
+		try {
+			const { output } = await generateText({
+				model: this.aiClient(
+					options?.model ??
+						this.configService.get<string>('AI_RECIPE_MODEL') ??
+						DEFAULT_RECIPE_MODEL
+				),
+				output: Output.object({ schema: outputSchema }),
+				instructions: options?.systemPrompt ?? RECIPE_SYSTEM_PROMPT,
+				messages: [{ role: 'user', content: userPrompt }],
+				temperature: options?.temperature ?? DEFAULT_TEMPERATURE
+			})
 
-		return output
+			return output
+		} catch (error) {
+			// NoOutputGeneratedError не содержит причины — логируем, чем закончила модель.
+			const detail = error as {
+				name?: string
+				message?: string
+				finishReason?: string
+				text?: string
+			}
+			this.logger.error(
+				`Structured generation failed: ${JSON.stringify({
+					name: detail.name,
+					message: detail.message,
+					finishReason: detail.finishReason,
+					textHead:
+						typeof detail.text === 'string'
+							? detail.text.slice(0, 200)
+							: undefined
+				})}`
+			)
+
+			throw new InternalServerErrorException(
+				'Модель не смогла сформировать ответ. Попробуйте еще раз или уменьшите объем запроса.'
+			)
+		}
 	}
 }

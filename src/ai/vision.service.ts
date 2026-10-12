@@ -1,17 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 import { ScanQrDto } from './dto/scan.dto.js'
-import { OPENROUTER_CLIENT, OpenRouterClient } from './providers/openrouter.js'
+import { AI_CLIENT, AiClient } from './providers/ai-client.js'
 
 @Injectable()
 export class VisionService {
 	constructor(
-		@Inject(OPENROUTER_CLIENT)
-		private readonly openrouter: OpenRouterClient
+		@Inject(AI_CLIENT)
+		private readonly aiClient: AiClient,
+		private readonly configService: ConfigService
 	) {}
 
 	public scanPhoto(_imageBase64: string, _mimeType: string) {
 		// TODO: реализовать вызов vision-модели через generateObject
+		// this.aiClient(configService.get('AI_VISION_MODEL') ?? DEFAULT_VISION_MODEL)
 		// Сохранить результат во временное хранилище (scanId) для batch-confirm
 		return {
 			scanId: '',

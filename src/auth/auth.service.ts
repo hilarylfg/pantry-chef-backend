@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config'
 import { verify } from 'argon2'
 import { Request, Response } from 'express'
 
-import { PrismaClient } from '../generated/prisma/client.js'
+import { Prisma } from '../generated/prisma/client.js'
 import { AuthMethod } from '../generated/prisma/enums.js'
 import { PrismaService } from '../prisma/prisma.service.js'
 import { UserService } from '../user/user.service.js'
@@ -46,23 +46,25 @@ export class AuthService {
 		}
 
 		try {
-			await this.prismaService.$transaction(async (tx: PrismaClient) => {
-				const user = await this.userService.createWithTransaction(
-					tx,
-					dto.email,
-					dto.password,
-					dto.name,
-					'',
-					AuthMethod.CREDENTIALS,
-					false
-				)
+			await this.prismaService.$transaction(
+				async (tx: Prisma.TransactionClient) => {
+					const user = await this.userService.createWithTransaction(
+						tx,
+						dto.email,
+						dto.password,
+						dto.name,
+						'',
+						AuthMethod.CREDENTIALS,
+						false
+					)
 
-				await this.emailConfirmationService.sendVerificationToken(
-					user.email
-				)
+					await this.emailConfirmationService.sendVerificationToken(
+						user.email
+					)
 
-				return user
-			})
+					return user
+				}
+			)
 
 			return {
 				message:

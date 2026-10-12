@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { hash } from 'argon2'
 
-import { AuthMethod, PrismaClient, User } from '../generated/prisma/client.js'
+import { AuthMethod, Prisma, User } from '../generated/prisma/client.js'
 import { PrismaService } from '../prisma/prisma.service.js'
 
 import { UpdateUserDto } from './dto/update-user.dto.js'
@@ -64,7 +64,7 @@ export class UserService {
 	}
 
 	public async createWithTransaction(
-		tx: PrismaClient,
+		tx: Prisma.TransactionClient,
 		email: string,
 		password: string,
 		displayName: string,
