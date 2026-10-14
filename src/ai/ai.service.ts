@@ -63,17 +63,25 @@ export class AiService {
 
 			return output
 		} catch (error) {
-			// NoOutputGeneratedError не содержит причины — логируем, чем закончила модель.
 			const detail = error as {
 				name?: string
 				message?: string
 				finishReason?: string
 				text?: string
+				statusCode?: number
+				url?: string
+				responseBody?: string
 			}
 			this.logger.error(
 				`Structured generation failed: ${JSON.stringify({
 					name: detail.name,
 					message: detail.message,
+					statusCode: detail.statusCode,
+					url: detail.url,
+					responseBodyHead:
+						typeof detail.responseBody === 'string'
+							? detail.responseBody.slice(0, 500)
+							: undefined,
 					finishReason: detail.finishReason,
 					textHead:
 						typeof detail.text === 'string'
