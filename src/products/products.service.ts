@@ -12,6 +12,8 @@ import { FindProductsDto } from './dto/find-products.dto.js'
 import { ConsumeProductDto, ProductDto } from './dto/product.dto.js'
 import { OffResponse } from './types/off-product.types.js'
 
+export const SAVES_SOON_DAYS = 3
+
 @Injectable()
 export class ProductsService {
 	private readonly logger = new Logger(ProductsService.name)
@@ -101,13 +103,11 @@ export class ProductsService {
 
 	public async expiringSoonProducts(
 		userId: string,
-		days: string
+		days = SAVES_SOON_DAYS
 	): Promise<Product[]> {
-		// days приходит из query-строки: некорректное значение → дефолт 3,
-		// иначе NaN превратится в Invalid Date и запрос упадет.
-		const horizonDays = Number.isFinite(Number(days))
-			? Math.min(Math.max(Number(days), 0), 365)
-			: 3
+		const horizonDays =
+			Number.isFinite(Number(days)) &&
+			Math.min(Math.max(Number(days), 0), 365)
 
 		return this.prismaService.product.findMany({
 			where: {

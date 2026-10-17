@@ -84,11 +84,20 @@ model Product {
 }
 
 model Recipe {
-  id          String   @id @default(uuid())
+id          String  @id @default(uuid())
   title       String
+  description String  @default("")
+  imageUrl    String?
+  cuisine     String?
+  difficulty  String?
+  prepTimeMinutes    Int?
+  cookTimeMinutes    Int?
+  servings           Int?
+  caloriesPerServing Int?
+  tags        Json    @default("[]")
   ingredients Json
   steps       Json
-  isFavorite  Boolean  @default(false) @map("is_favorite")
+  isFavorite  Boolean @default(false) @map("is_favorite")
   userId      String   @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now()) @map("created_at")
