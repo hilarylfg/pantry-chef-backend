@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer'
 import {
+	IsArray,
 	IsBoolean,
 	IsEnum,
 	IsNumber,
@@ -65,6 +66,14 @@ export class GenerateRecipeDto {
 	@IsOptional()
 	@IsString({ message: 'diet должен быть строкой' })
 	diet: string
+
+	@IsOptional()
+	@IsArray({ message: 'excludeIds должен быть массивом строк.' })
+	@IsString({
+		each: true,
+		message: 'excludeIds должен быть массивом строк.'
+	})
+	excludeIds?: string[]
 
 	@IsOptional()
 	@IsObject({ message: 'options должен быть объектом.' })

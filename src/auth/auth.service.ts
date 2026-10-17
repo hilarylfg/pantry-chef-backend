@@ -123,7 +123,9 @@ export class AuthService {
 			)
 		}
 
-		return this.sessionService.saveSession(req, user)
+		const { password: _password, ...safeUser } = user
+
+		return this.sessionService.saveSession(req, safeUser)
 	}
 
 	public async extractProfileFromCode(
@@ -168,7 +170,9 @@ export class AuthService {
 				}
 			})
 
-			return this.sessionService.saveSession(req, existingUser)
+			const { password: _password, ...safeUser } = existingUser
+
+			return this.sessionService.saveSession(req, safeUser)
 		}
 
 		// Новый пользователь — создаём

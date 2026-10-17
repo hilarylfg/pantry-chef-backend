@@ -1,5 +1,23 @@
-import { Product } from '@/generated/prisma/client.js'
-import { SAVES_SOON_DAYS } from '@/products/products.service.js'
+import { Product } from '../../generated/prisma/client.js'
+import { SAVES_SOON_DAYS } from '../../products/products.service.js'
+
+export interface MissingIngredient {
+	name: string
+	substitute?: string
+}
+
+export interface SaveProduct {
+	productId: string
+	name: string
+	daysLeft: number
+}
+
+export interface MatchStats {
+	total: number
+	matched: number
+	missing: MissingIngredient[]
+	saves: SaveProduct[]
+}
 
 export function normalizeName(name: string): string {
 	return name.trim().toLowerCase().replace(/ё/g, 'е')
@@ -15,8 +33,8 @@ export function computeMatch(
 	}[]
 	const byName = new Map(products.map(p => [normalizeName(p.name), p]))
 
-	const missing = []
-	const saves = []
+	const missing: MissingIngredient[] = []
+	const saves: SaveProduct[] = []
 	let matched = 0
 	for (const ing of items) {
 		const product = byName.get(normalizeName(ing.name))

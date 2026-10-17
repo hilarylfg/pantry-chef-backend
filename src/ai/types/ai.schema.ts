@@ -40,8 +40,6 @@ export const IngredientSchema = z.object({
 	name: z.string().min(1).max(100),
 	amount: z.number().positive(),
 	unit: UnitEnum,
-	fromPantry: z.boolean().default(false),
-	pantryProductId: z.string().optional(),
 	substitute: z.string().max(200).optional()
 })
 

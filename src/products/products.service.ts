@@ -32,7 +32,7 @@ export class ProductsService {
 		return this.prismaService.product.findMany({
 			where: {
 				userId,
-				category: dto.category
+				...(dto.category && { category: dto.category })
 			},
 			orderBy: this.buildOrderBy(dto.sort, dto.order),
 			skip,
@@ -103,7 +103,7 @@ export class ProductsService {
 
 	public async expiringSoonProducts(
 		userId: string,
-		days = SAVES_SOON_DAYS
+		days: string | number = SAVES_SOON_DAYS
 	): Promise<Product[]> {
 		const horizonDays =
 			Number.isFinite(Number(days)) &&
@@ -129,12 +129,18 @@ export class ProductsService {
 			where: { id: productId, userId }
 		})
 
+		if (!product) {
+			throw new NotFoundException('Продукт не найден')
+		}
+
 		const newAmount = product.amount - dto.amount
 
 		if (newAmount <= 0) {
-			return this.prismaService.product.delete({
-				where: { id: productId }
+			await this.prismaService.product.deleteMany({
+				where: { id: productId, userId }
 			})
+
+			return product
 		}
 
 		return this.prismaService.product.update({

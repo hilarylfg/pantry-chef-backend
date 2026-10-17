@@ -7,13 +7,15 @@ import {
 	HttpStatus,
 	Param,
 	Patch,
-	Post
+	Post,
+	Query
 } from '@nestjs/common'
 
 import { Authorization } from '../auth/decorators/auth.decorator.js'
 import { Authorized } from '../auth/decorators/authorized.decorator.js'
 
 import { FindRecipesDto } from './dto/find-recipes.dto.js'
+import { FindRecommendationsDto } from './dto/find-recommendations.dto.js'
 import { GenerateRecipeDto } from './dto/generate-recipe.dto.js'
 import { UpdateRecipeDto } from './dto/update-recipe.dto.js'
 import { RecipesService } from './recipes.service.js'
@@ -27,9 +29,19 @@ export class RecipesController {
 	@Get()
 	public async findAllRecipes(
 		@Authorized('id') userId: string,
-		@Body() dto: FindRecipesDto
+		@Query() dto: FindRecipesDto
 	) {
 		return this.recipesService.findAllRecipes(userId, dto)
+	}
+
+	@Authorization()
+	@HttpCode(HttpStatus.OK)
+	@Get('recommendations')
+	public async getRecommendations(
+		@Authorized('id') userId: string,
+		@Query() dto: FindRecommendationsDto
+	) {
+		return this.recipesService.getRecommendations(userId, dto)
 	}
 
 	@Authorization()

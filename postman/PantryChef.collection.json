@@ -329,7 +329,136 @@
                 { "key": "limit", "value": "20" }
               ]
             },
-            "description": "Параметры: category (по умолчанию dairy), sort (expiryDate|createdAt|name|amount|unit|category), order (asc|desc), page, limit."
+            "description": "Параметры: category (опционально — без него вернутся все продукты), sort (expiryDate|createdAt|name|amount|unit|category), order (asc|desc), page, limit."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product (Manual) 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Молоко Простоквашино\",\n  \"category\": \"dairy\",\n  \"amount\": 1,\n  \"unit\": \"l\",\n  \"expiryDate\": \"2026-07-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.id) {",
+                  "    pm.collectionVariables.set('product_id', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product 🔒",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 0.5,\n  \"expiryDate\": \"2026-06-25\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product 🔒",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Expiring Soon 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/expiring?days=3",
+              "host": ["{{base_url}}"],
+              "path": ["products", "expiring"],
+              "query": [
+                { "key": "days", "value": "3" }
+              ]
+            },
+            "description": "Продукты, срок которых истекает в течение `days` дней (по умолчанию 3, максимум 365)."
+          },
+          "response": []
+        },
+        {
+          "name": "Scan Barcode 🔒",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/barcode/{{barcode}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "barcode", "{{barcode}}"]
+            },
+            "description": "Ищет продукт в Open Food Facts по штрихкоду, категорию и единицы измерения определяет LLM. `barcode` — цифры с упаковки (EAN-13)."
+          },
+          "response": []
+        },
+        {
+          "name": "Consume Product 🔒",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 250\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}/consume",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}", "consume"]
+            },
+            "description": "Списывает `amount` в единицах продукта; если после списания остаётся ≤ 0 — продукт удаляется."
           },
           "response": []
         },
@@ -337,25 +466,6 @@
           "name": "🚧 PLANNED (not implemented)",
           "description": "Эти эндпоинты ещё не реализованы в коде. Тела оставлены как спецификация для будущей реализации. Уберите их отсюда после реализации и проверьте контракт с реальным DTO.",
           "item": [
-            {
-              "name": "Create Product (Manual) 🔒",
-              "request": {
-                "method": "POST",
-                "header": [
-                  { "key": "Content-Type", "value": "application/json" }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Молоко Простоквашино\",\n  \"category\": \"dairy\",\n  \"amount\": 1,\n  \"unit\": \"l\",\n  \"expiryDate\": \"2026-07-01\"\n}"
-                },
-                "url": {
-                  "raw": "{{base_url}}/products",
-                  "host": ["{{base_url}}"],
-                  "path": ["products"]
-                }
-              },
-              "response": []
-            },
             {
               "name": "Scan Photo (Vision) 🔒",
               "request": {
@@ -372,25 +482,6 @@
                   "raw": "{{base_url}}/products/scan",
                   "host": ["{{base_url}}"],
                   "path": ["products", "scan"]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Scan QR (Честный ЗНАК) 🔒",
-              "request": {
-                "method": "POST",
-                "header": [
-                  { "key": "Content-Type", "value": "application/json" }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"rawValue\": \"0104607060503715215&b.AW 93+yvK\"\n}"
-                },
-                "url": {
-                  "raw": "{{base_url}}/products/scan-qr",
-                  "host": ["{{base_url}}"],
-                  "path": ["products", "scan-qr"]
                 }
               },
               "response": []
@@ -413,107 +504,96 @@
                 }
               },
               "response": []
-            },
-            {
-              "name": "Get Product 🔒",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/products/{{product_id}}",
-                  "host": ["{{base_url}}"],
-                  "path": ["products", "{{product_id}}"]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Update Product 🔒",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  { "key": "Content-Type", "value": "application/json" }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"amount\": 0.5,\n  \"expiryDate\": \"2026-06-25\"\n}"
-                },
-                "url": {
-                  "raw": "{{base_url}}/products/{{product_id}}",
-                  "host": ["{{base_url}}"],
-                  "path": ["products", "{{product_id}}"]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Delete Product 🔒",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/products/{{product_id}}",
-                  "host": ["{{base_url}}"],
-                  "path": ["products", "{{product_id}}"]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Expiring Soon 🔒",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/products/expiring",
-                  "host": ["{{base_url}}"],
-                  "path": ["products", "expiring"]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "Consume Product 🔒",
-              "request": {
-                "method": "POST",
-                "header": [
-                  { "key": "Content-Type", "value": "application/json" }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"amountUsed\": 0.5\n}"
-                },
-                "url": {
-                  "raw": "{{base_url}}/products/{{product_id}}/consume",
-                  "host": ["{{base_url}}"],
-                  "path": ["products", "{{product_id}}", "consume"]
-                }
-              },
-              "response": []
             }
           ]
         }
       ]
     },
     {
-      "name": "🍳 Recipes 🚧 PLANNED",
-      "description": "Контроллер recipes в коде пока пустой. Эндпоинты ниже — спецификация для будущей реализации.",
+      "name": "🍳 Recipes",
+      "description": "Рецепты и фича «Что приготовить сегодня».",
       "item": [
         {
           "name": "List My Recipes 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (Array.isArray(data) && data.length > 0 && data[0].id) {",
+                  "    pm.collectionVariables.set('recipe_id', data[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/recipes",
+              "raw": "{{base_url}}/recipes?sort=createdAt&order=desc&page=1&limit=20",
               "host": ["{{base_url}}"],
-              "path": ["recipes"]
+              "path": ["recipes"],
+              "query": [
+                { "key": "sort", "value": "createdAt" },
+                { "key": "order", "value": "desc" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "Параметры: sort (createdAt|title|favorite), order (asc|desc), page, limit."
+          },
+          "response": []
+        },
+        {
+          "name": "Recommendations (Что приготовить сегодня) 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (Array.isArray(data) && data.length > 0 && data[0].id) {",
+                  "    pm.collectionVariables.set('recipe_id', data[0].id);",
+                  "}"
+                ]
+              }
             }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/recipes/recommendations?count=3",
+              "host": ["{{base_url}}"],
+              "path": ["recipes", "recommendations"],
+              "query": [
+                { "key": "count", "value": "3" }
+              ]
+            },
+            "description": "Карточки «Что приготовить сегодня» из сохранённых рецептов (до `count`, по умолчанию 3). Берёт рецепты, где совпадает ≥ 50% ингредиентов, сортирует по совпадению и пользе для кухни. `match` — сколько ингредиентов есть на кухне (для «6 из 7 ваших»), `saves` — истекающие продукты (≤ 3 дней, для бейджа «спасает…»), `totalTimeMinutes` = prep + cook (для «30 мин»)."
           },
           "response": []
         },
         {
           "name": "Generate Recipes (AI) 🔒",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (Array.isArray(data) && data.length > 0 && data[0].id) {",
+                  "    pm.collectionVariables.set('recipe_id', data[0].id);",
+                  "}"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -521,13 +601,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"productIds\": [\n    \"{{product_id}}\"\n  ],\n  \"constraints\": {\n    \"maxTimeMinutes\": 30,\n    \"difficulty\": \"easy\",\n    \"cuisine\": \"italian\",\n    \"mealType\": \"dinner\",\n    \"servings\": 2\n  },\n  \"options\": {\n    \"count\": 3,\n    \"includeShoppingList\": true\n  }\n}"
+              "raw": "{\n  \"maxTimeMinutes\": 30,\n  \"difficulty\": \"easy\",\n  \"cuisine\": \"italian\",\n  \"mealType\": \"dinner\",\n  \"servings\": 2,\n  \"options\": {\n    \"count\": 3,\n    \"includeShoppingList\": false\n  },\n  \"excludeIds\": [\n    \"{{recipe_id}}\"\n  ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/recipes/generate",
               "host": ["{{base_url}}"],
               "path": ["recipes", "generate"]
-            }
+            },
+            "description": "Генерирует рецепты из продуктов на кухне, сохраняет их и возвращает такие же карточки, как Recommendations. Все поля опциональны. `excludeIds` — id недавно показанных карточек: LLM не будет повторять эти блюда при refresh."
           },
           "response": []
         },
@@ -577,42 +658,48 @@
           "response": []
         },
         {
-          "name": "Cook Recipe (Consume Ingredients) 🔒",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{}"
+          "name": "🚧 PLANNED (not implemented)",
+          "description": "Эти эндпоинты ещё не реализованы в коде. Тела оставлены как спецификация для будущей реализации. Уберите их отсюда после реализации и проверьте контракт с реальным DTO.",
+          "item": [
+            {
+              "name": "Cook Recipe (Consume Ingredients) 🔒",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/recipes/{{recipe_id}}/cook",
+                  "host": ["{{base_url}}"],
+                  "path": ["recipes", "{{recipe_id}}", "cook"]
+                }
+              },
+              "response": []
             },
-            "url": {
-              "raw": "{{base_url}}/recipes/{{recipe_id}}/cook",
-              "host": ["{{base_url}}"],
-              "path": ["recipes", "{{recipe_id}}", "cook"]
+            {
+              "name": "Regenerate Similar 🔒",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"variation\": \"spicy\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/recipes/{{recipe_id}}/regenerate",
+                  "host": ["{{base_url}}"],
+                  "path": ["recipes", "{{recipe_id}}", "regenerate"]
+                }
+              },
+              "response": []
             }
-          },
-          "response": []
-        },
-        {
-          "name": "Regenerate Similar 🔒",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"variation\": \"spicy\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/recipes/{{recipe_id}}/regenerate",
-              "host": ["{{base_url}}"],
-              "path": ["recipes", "{{recipe_id}}", "regenerate"]
-            }
-          },
-          "response": []
+          ]
         }
       ]
     },
@@ -641,7 +728,7 @@
           "response": []
         },
         {
-          "name": "Generate Recipe",
+          "name": "Scan QR (Честный ЗНАК) 🔒",
           "request": {
             "method": "POST",
             "header": [
@@ -649,16 +736,42 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"prompt\": \"Сгенерируй рецепт из спагетти, куриной грудки и помидоров\",\n  \"cuisine\": \"italian\",\n  \"difficulty\": \"easy\",\n  \"temperature\": 0.7\n}"
+              "raw": "{\n  \"rawValue\": \"0104607060503715215&b.AW 93+yvK\"\n}"
             },
             "url": {
-              "raw": "{{base_url}}/ai/generate",
+              "raw": "{{base_url}}/ai/scan-qr",
               "host": ["{{base_url}}"],
-              "path": ["ai", "generate"]
+              "path": ["ai", "scan-qr"]
             },
-            "description": "Генерация структурированного рецепта по схеме LLMRecipeSchema. Поля: prompt (обязательно), model?, temperature?, cuisine?, difficulty?. Ответ стримится."
+            "description": "Разбирает код маркировки Честный ЗНАК (DataMatrix со сканера/камеры) в данные продукта."
           },
           "response": []
+        },
+        {
+          "name": "🚧 PLANNED (not implemented)",
+          "description": "Структурированная генерация рецептов живёт в POST /recipes/generate — этот эндпоинт не нужен, пока не появится свободная генерация по схеме LLMRecipeSchema.",
+          "item": [
+            {
+              "name": "Generate Recipe",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"prompt\": \"Сгенерируй рецепт из спагетти, куриной грудки и помидоров\",\n  \"cuisine\": \"italian\",\n  \"difficulty\": \"easy\",\n  \"temperature\": 0.7\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/ai/generate",
+                  "host": ["{{base_url}}"],
+                  "path": ["ai", "generate"]
+                },
+                "description": "Генерация структурированного рецепта по схеме LLMRecipeSchema. Поля: prompt (обязательно), model?, temperature?, cuisine?, difficulty?. Ответ стримится."
+              },
+              "response": []
+            }
+          ]
         }
       ]
     },
@@ -1029,6 +1142,11 @@
     {
       "key": "product_id",
       "value": "",
+      "type": "string"
+    },
+    {
+      "key": "barcode",
+      "value": "3017620422003",
       "type": "string"
     },
     {

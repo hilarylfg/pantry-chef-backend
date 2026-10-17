@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
-import { User } from '../../generated/prisma/client.js'
+import { PublicUser } from '../../user/user.service.js'
 
 export const Authorized = createParamDecorator(
-	(data: keyof User, ctx: ExecutionContext) => {
-		const request = ctx.switchToHttp().getRequest<{ user: User }>()
+	(data: keyof PublicUser, ctx: ExecutionContext) => {
+		const request = ctx.switchToHttp().getRequest<{ user: PublicUser }>()
 		const user = request.user
 
 		return data ? user[data] : user

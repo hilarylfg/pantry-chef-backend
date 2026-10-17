@@ -12,6 +12,7 @@ export interface RecipeConstraints {
 	diet?: string
 	language?: string
 	equipment?: string[]
+	excludeTitles?: string[]
 	options: {
 		count?: number
 		includeShoppingList?: boolean
@@ -47,6 +48,7 @@ ${constraints.servings ? `- Количество порций: ${constraints.ser
 ${constraints.cuisine ? `- Предпочитаемая кухня: ${constraints.cuisine}` : null}
 ${constraints.diet ? `- Диета пользователя: ${constraints.diet}` : null}
 ${constraints.language ? `- Язык ответа: ${constraints.language}` : null}
+${constraints.excludeTitles?.length ? `- Уже предлагали (не повторяй): ${constraints.excludeTitles.join(', ')}` : null}
 ${equipmentStr ? `- Доступное оборудование: ${equipmentStr}` : null}
 
 Количество рецептов: ${constraints.options.count ?? 1}

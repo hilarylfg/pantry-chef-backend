@@ -11,8 +11,11 @@ import { RecipeSortField, SortOrder } from '../libs/common/types/product.js'
 import { PrismaService } from '../prisma/prisma.service.js'
 
 import { FindRecipesDto } from './dto/find-recipes.dto.js'
+import { FindRecommendationsDto } from './dto/find-recommendations.dto.js'
 import { GenerateRecipeDto } from './dto/generate-recipe.dto.js'
+import { RecipeCardDto, toCardDto } from './dto/recipe-card.dto.js'
 import { UpdateRecipeDto } from './dto/update-recipe.dto.js'
+import { computeMatch, MatchStats } from './utils/compute-match.js'
 
 @Injectable()
 export class RecipesService {
@@ -48,9 +51,17 @@ export class RecipesService {
 	}
 
 	public async generateRecipe(userId: string, dto: GenerateRecipeDto) {
-		const products = await this.prismaService.product.findMany({
-			where: { userId }
-		})
+		const [products, excludedRecipes] = await Promise.all([
+			this.prismaService.product.findMany({
+				where: { userId }
+			}),
+			dto.excludeIds?.length
+				? this.prismaService.recipe.findMany({
+						where: { id: { in: dto.excludeIds }, userId },
+						select: { title: true }
+					})
+				: Promise.resolve<{ title: string }[]>([])
+		])
 
 		const constraints: RecipeConstraints = {
 			maxTimeMinutes: dto.maxTimeMinutes,
@@ -59,6 +70,7 @@ export class RecipesService {
 			servings: dto.servings,
 			cuisine: dto.cuisine,
 			diet: dto.diet,
+			excludeTitles: excludedRecipes.map(r => r.title),
 			options: {
 				count: dto.options?.count,
 				includeShoppingList: dto.options?.includeShoppingList
@@ -71,20 +83,30 @@ export class RecipesService {
 			RecipesSchema
 		)
 
-		await Promise.all(
-			recipes.map(recipe =>
+		const savedRecipes = await Promise.all(
+			recipes.map(r =>
 				this.prismaService.recipe.create({
 					data: {
-						title: recipe.title,
-						ingredients: recipe.ingredients,
-						steps: recipe.steps,
+						title: r.title,
+						description: r.description,
+						cuisine: r.cuisine,
+						difficulty: r.difficulty,
+						prepTimeMinutes: r.prepTimeMinutes,
+						cookTimeMinutes: r.cookTimeMinutes,
+						servings: r.servings,
+						caloriesPerServing: r.caloriesPerServing,
+						tags: r.tags ?? [],
+						ingredients: r.ingredients,
+						steps: r.steps,
 						userId
 					}
 				})
 			)
 		)
 
-		return recipes
+		return savedRecipes.map(recipe =>
+			toCardDto(recipe, computeMatch(recipe.ingredients, products))
+		)
 	}
 
 	public async updateRecipe(
@@ -112,6 +134,37 @@ export class RecipesService {
 		})
 	}
 
+	public async getRecommendations(
+		userId: string,
+		dto: FindRecommendationsDto
+	): Promise<RecipeCardDto[]> {
+		const [products, recipes] = await Promise.all([
+			this.prismaService.product.findMany({ where: { userId } }),
+			this.prismaService.recipe.findMany({
+				where: { userId },
+				orderBy: { createdAt: 'desc' },
+				take: 30
+			})
+		])
+
+		return recipes
+			.map(r => ({
+				recipe: r,
+				match: computeMatch(r.ingredients, products)
+			}))
+			.filter(
+				({ match }) =>
+					match.total > 0 && match.matched / match.total >= 0.5
+			)
+			.sort((a, b) => this.score(b.match) - this.score(a.match))
+			.slice(0, dto.count)
+			.map(({ recipe, match }) => toCardDto(recipe, match))
+	}
+
+	private score({ matched, total, saves }: MatchStats): number {
+		return matched / total + saves.length * 2
+	}
+
 	private buildOrderBy(
 		sort?: RecipeSortField,
 		order?: SortOrder
@@ -122,7 +175,7 @@ export class RecipesService {
 			case 'title':
 				return { title: order }
 			case 'favorite':
-				return { favorite: order }
+				return { isFavorite: order }
 			default:
 				return { createdAt: order }
 		}

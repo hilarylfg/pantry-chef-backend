@@ -6,8 +6,7 @@ import {
 } from '@nestjs/common'
 import { Request } from 'express'
 
-import { User } from '../../generated/prisma/client.js'
-import { UserService } from '../../user/user.service.js'
+import { PublicUser, UserService } from '../../user/user.service.js'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -17,7 +16,7 @@ export class AuthGuard implements CanActivate {
 		const request = context
 			.switchToHttp()
 			.getRequest<
-				Request & { session: { userId?: string }; user?: User }
+				Request & { session: { userId?: string }; user?: PublicUser }
 			>()
 
 		if (typeof request.session.userId === 'undefined') {

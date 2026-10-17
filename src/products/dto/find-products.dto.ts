@@ -15,7 +15,7 @@ export class FindProductsDto {
 	@IsIn(PRODUCT_CATEGORIES, {
 		message: 'Некорректная категория.'
 	})
-	category: ProductCategory = 'dairy'
+	category?: ProductCategory
 
 	@IsOptional()
 	@IsIn(PRODUCT_SORT_FIELDS, {

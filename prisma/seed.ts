@@ -326,49 +326,51 @@ async function seedRecipes() {
 		data: {
 			userId: USER_ID,
 			title: 'Паста с курицей и томатами',
+			description:
+				'Спагетти с сочной курицей и томатным соусом — ужин за полчаса.',
+			cuisine: 'italian',
+			difficulty: 'easy',
+			prepTimeMinutes: 15,
+			cookTimeMinutes: 15,
+			servings: 2,
+			caloriesPerServing: 520,
+			tags: ['паста', 'итальянская', 'ужин'],
 			isFavorite: true,
 			ingredients: [
 				{
 					name: 'Спагетти',
 					amount: 200,
 					unit: 'g',
-					fromPantry: true
 				},
 				{
 					name: 'Куриная грудка',
 					amount: 250,
 					unit: 'g',
-					fromPantry: true
 				},
 				{
 					name: 'Помидоры',
 					amount: 3,
 					unit: 'piece',
-					fromPantry: true
 				},
 				{
 					name: 'Чеснок',
 					amount: 2,
 					unit: 'piece',
-					fromPantry: true
 				},
 				{
 					name: 'Оливковое масло Extra Virgin',
 					amount: 2,
 					unit: 'tbsp',
-					fromPantry: true
 				},
 				{
 					name: 'Соль морская',
 					amount: 1,
 					unit: 'tsp',
-					fromPantry: true
 				},
 				{
 					name: 'Базилик свежий',
 					amount: 1,
 					unit: 'pack',
-					fromPantry: false,
 					substitute: 'Сушёный базилик (1 ч.л.)'
 				}
 			],
@@ -412,37 +414,39 @@ async function seedRecipes() {
 		data: {
 			userId: USER_ID,
 			title: 'Омлет с сыром и зеленью',
+			description: 'Пышный омлет с сыром Гауда — завтрак за 10 минут.',
+			difficulty: 'easy',
+			prepTimeMinutes: 5,
+			cookTimeMinutes: 5,
+			servings: 1,
+			caloriesPerServing: 320,
+			tags: ['завтрак', 'быстро'],
 			isFavorite: false,
 			ingredients: [
 				{
 					name: 'Яйца С0',
 					amount: 3,
 					unit: 'piece',
-					fromPantry: true
 				},
 				{
 					name: 'Молоко 3.2%',
 					amount: 50,
 					unit: 'ml',
-					fromPantry: true
 				},
 				{
 					name: 'Сыр Гауда',
 					amount: 50,
 					unit: 'g',
-					fromPantry: true
 				},
 				{
 					name: 'Сливочное масло',
 					amount: 10,
 					unit: 'g',
-					fromPantry: true
 				},
 				{
 					name: 'Соль морская',
 					amount: 1,
 					unit: 'pinch',
-					fromPantry: true
 				}
 			],
 			steps: [
@@ -479,37 +483,40 @@ async function seedRecipes() {
 		data: {
 			userId: OAUTH_USER_ID,
 			title: 'Гречка с говяжьим фаршем',
+			description: 'Сытная гречка с обжаренным фаршем и луком.',
+			cuisine: 'russian',
+			difficulty: 'easy',
+			prepTimeMinutes: 10,
+			cookTimeMinutes: 20,
+			servings: 2,
+			caloriesPerServing: 480,
+			tags: ['ужин', 'сытно'],
 			isFavorite: true,
 			ingredients: [
 				{
 					name: 'Гречка',
 					amount: 200,
 					unit: 'g',
-					fromPantry: true
 				},
 				{
 					name: 'Говяжий фарш',
 					amount: 300,
 					unit: 'g',
-					fromPantry: true
 				},
 				{
 					name: 'Лук репчатый',
 					amount: 1,
 					unit: 'piece',
-					fromPantry: true
 				},
 				{
 					name: 'Оливковое масло Extra Virgin',
 					amount: 2,
 					unit: 'tbsp',
-					fromPantry: true
 				},
 				{
 					name: 'Чёрный перец молотый',
 					amount: 1,
 					unit: 'pinch',
-					fromPantry: true
 				}
 			],
 			steps: [
