@@ -21,7 +21,9 @@ async function bootstrap(): Promise<INestApplication> {
 	const logger = new Logger('Bootstrap')
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService)
-	const redis = await createClient().connect()
+	const redis = createClient({
+		url: process.env.REDIS_URL
+	})
 	redis.on('error', err => {
 		logger.error('Redis connection error:', err)
 	})
