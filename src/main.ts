@@ -22,7 +22,9 @@ async function bootstrap(): Promise<INestApplication> {
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService)
 	const redis = createClient({
-		url: process.env.REDIS_URL
+		url: process.env.REDIS_URL,
+		username: process.env.REDIS_USER,
+		password: process.env.REDIS_PASSWORD
 	})
 	redis.on('error', err => {
 		logger.error('Redis connection error:', err)
@@ -80,6 +82,8 @@ async function bootstrap(): Promise<INestApplication> {
 			})
 		})
 	)
+
+	await app.init()
 
 	cachedApp = app
 	return app
