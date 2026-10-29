@@ -1,11 +1,12 @@
 {
-	"version": 2,
-	"builds": [
-		{
-			"src": "dist/src/main.js",
-			"use": "@vercel/node",
-			"config": { "includeFiles": "dist/**" }
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"buildCommand": "prisma generate && prisma db push && nest build",
+	"functions": {
+		"dist/src/main.js": {
+			"maxDuration": 60
 		}
-	],
-	"routes": [{ "src": "/(.*)", "dest": "dist/src/main.js" }]
+	},
+	"rewrites": [
+		{ "source": "/(.*)", "destination": "/dist/src/main.js" }
+	]
 }
