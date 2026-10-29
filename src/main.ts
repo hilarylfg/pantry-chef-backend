@@ -15,10 +15,7 @@ async function bootstrap() {
 	const logger = new Logger('Bootstrap')
 	const app = await NestFactory.create(AppModule)
 	const config = app.get(ConfigService)
-	const redis = createClient({
-		url: config.getOrThrow('REDIS_URI'),
-		password: config.getOrThrow<string>('REDIS_PASSWORD')
-	})
+	const redis = await createClient().connect()
 	redis.on('error', err => {
 		logger.error('Redis connection error:', err)
 	})

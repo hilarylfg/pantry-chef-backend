@@ -6,20 +6,20 @@ Backend для **PantryChef** — умного помощника для хол�
 
 ## Стек технологий
 
-| Категория | Технология |
-|---|---|
-| **Framework** | NestJS 11 (TypeScript 5.7, Node 24) |
-| **База данных** | PostgreSQL + Prisma 7 (driver adapter `@prisma/adapter-pg`) |
-| **Сессии** | express-session + Redis (connect-redis v9 / node-redis v6) |
-| **AI** | Vercel AI SDK 7 + OpenRouter (модели: GPT-4, Claude, Gemini и др.) |
-| **Валидация** | class-validator + class-transformer |
-| **Валидация AI-ответов** | Zod 4 (структурированные схемы) |
-| **Авторизация** | Cookie-сессии (без JWT), argon2-хеширование паролей |
-| **OAuth** | Google, Yandex, GitHub |
-| **2FA** | TOTP (двухфакторная аутентификация) |
-| **Почта** | @nestjs-modules/mailer + React Email (через Resend SMTP) |
-| **Форматирование** | Prettier + @trivago/prettier-plugin-sort-imports |
-| **Линтер** | ESLint 9 + typescript-eslint 8 |
+| Категория                | Технология                                                         |
+| ------------------------ | ------------------------------------------------------------------ |
+| **Framework**            | NestJS 11 (TypeScript 5.7, Node 24)                                |
+| **База данных**          | PostgreSQL + Prisma 7 (driver adapter `@prisma/adapter-pg`)        |
+| **Сессии**               | express-session + Redis (connect-redis v9 / node-redis v6)         |
+| **AI**                   | Vercel AI SDK 7 + OpenRouter (модели: GPT-4, Claude, Gemini и др.) |
+| **Валидация**            | class-validator + class-transformer                                |
+| **Валидация AI-ответов** | Zod 4 (структурированные схемы)                                    |
+| **Авторизация**          | Cookie-сессии (без JWT), argon2-хеширование паролей                |
+| **OAuth**                | Google, Yandex, GitHub                                             |
+| **2FA**                  | TOTP (двухфакторная аутентификация)                                |
+| **Почта**                | @nestjs-modules/mailer + React Email (через Resend SMTP)           |
+| **Форматирование**       | Prettier + @trivago/prettier-plugin-sort-imports                   |
+| **Линтер**               | ESLint 9 + typescript-eslint 8                                     |
 
 ---
 
@@ -84,15 +84,15 @@ src/
 
 Полный CRUD + доп. эндпоинты:
 
-| Метод | Путь | Описание |
-|---|---|---|
-| `GET` | `/products` | Список продуктов (пагинация, сортировка, фильтр по категории) |
-| `POST` | `/products` | Добавить продукт |
-| `GET` | `/products/:id` | Получить продукт по ID |
-| `PATCH` | `/products/:id` | Обновить продукт |
-| `DELETE` | `/products/:id` | Удалить продукт |
-| `GET` | `/products/expiring` | Продукты с истекающим сроком годности |
-| `POST` | `/products/:id/consume` | Уменьшить количество продукта |
+| Метод    | Путь                    | Описание                                                      |
+| -------- | ----------------------- | ------------------------------------------------------------- |
+| `GET`    | `/products`             | Список продуктов (пагинация, сортировка, фильтр по категории) |
+| `POST`   | `/products`             | Добавить продукт                                              |
+| `GET`    | `/products/:id`         | Получить продукт по ID                                        |
+| `PATCH`  | `/products/:id`         | Обновить продукт                                              |
+| `DELETE` | `/products/:id`         | Удалить продукт                                               |
+| `GET`    | `/products/expiring`    | Продукты с истекающим сроком годности                         |
+| `POST`   | `/products/:id/consume` | Уменьшить количество продукта                                 |
 
 Категории: dairy, meat, poultry, fish, seafood, eggs, vegetables, fruits, grains, pasta, bread, bakery, canned, frozen, spices, oils, sauces, beverages, snacks, sweets, other.
 
@@ -100,15 +100,16 @@ src/
 
 ### Рецепты
 
-| Метод | Путь | Описание |
-|---|---|---|
-| `GET` | `/recipes` | Список рецептов (пагинация, сортировка) |
-| `GET` | `/recipes/:id` | Получить рецепт по ID |
-| `POST` | `/recipes/generate` | Сгенерировать рецепт(ы) через AI |
-| `PATCH` | `/recipes/:id` | Обновить рецепт |
-| `DELETE` | `/recipes/:id` | Удалить рецепт |
+| Метод    | Путь                | Описание                                |
+| -------- | ------------------- | --------------------------------------- |
+| `GET`    | `/recipes`          | Список рецептов (пагинация, сортировка) |
+| `GET`    | `/recipes/:id`      | Получить рецепт по ID                   |
+| `POST`   | `/recipes/generate` | Сгенерировать рецепт(ы) через AI        |
+| `PATCH`  | `/recipes/:id`      | Обновить рецепт                         |
+| `DELETE` | `/recipes/:id`      | Удалить рецепт                          |
 
 AI-генерация рецептов:
+
 - Пользователь передаёт параметры: maxTimeMinutes, difficulty, cuisine, mealType, servings, diet, options.count
 - Сервис берёт продукты пользователя из БД, строит промпт через `buildRecipeUserPrompt()`
 - LLM возвращает структурированный JSON (через Zod-схему `RecipesSchema`)
@@ -134,31 +135,37 @@ AI-генерация рецептов:
 ## Что запланировано
 
 ### Распознавание продуктов по фото (Vision)
+
 - `POST /ai/scan-photo` — загрузка фото полок холодильника
 - Vision-модель распознаёт продукты, их количество, категорию, срок годности
 - Возвращает список с confidence-score, пометками для подтверждения
 - Подтверждение пачкой: `POST /ai/batch-confirm`
 
 ### QR / DataMatrix сканирование
+
 - `POST /ai/scan-qr` — парсинг штрих-кодов (GS1, DataMatrix, Честный ЗНАК)
 - Автоматическое извлечение названия, веса, категории из БД продуктов
 
 ### Планы питания
+
 - Генерация меню на N дней с учётом доступных продуктов
 - Распределение скоропортящихся продуктов в первые дни
 - Учёт диеты, бюджета, предпочтений по кухням
 
 ### Списки покупок
+
 - Автоматическая генерация списка на основе выбранных рецептов
 - Группировка по категориям, приоритеты
 - Сравнение с тем, что уже есть в холодильнике
 
 ### Алерты об истечении сроков
+
 - Уведомления о скоропортящихся продуктах
 - Рекомендации по использованию (приготовить, заморозить, проверить)
 - Интеграция с планом питания
 
 ### Дополнительно
+
 - Telegram-бот для уведомлений и управления
 - Дашборд статистики (сколько продуктов испортилось, сколько рецептов приготовлено)
 - Swagger/OpenAPI документация
@@ -178,6 +185,7 @@ Recipe        — рецепты (title, ingredients[JSON], steps[JSON], isFavor
 ```
 
 **Запланированные модели:**
+
 ```
 MealPlan          — планы питания
 ShoppingList      — списки покупок
@@ -203,7 +211,7 @@ bun install
 
 # 2. Настроить переменные окружения
 cp .env.example .env
-# Заполнить: DATABASE_URL, REDIS_URI, SESSION_SECRET, OPENROUTER_API_KEY, SMTP_*, OAuth-ключи
+# Заполнить: POSTGRES_PRISMA_URL, REDIS_URL, SESSION_SECRET, OPENROUTER_API_KEY, SMTP_*, OAuth-ключи
 
 # 3. Применить миграции БД
 npx prisma migrate dev
@@ -227,13 +235,13 @@ APPLICATION_PORT=4000
 ALLOWED_ORIGINS=http://localhost:3000
 
 # Database
-DATABASE_URL=postgres://postgres:123456@localhost:5433/pantry-chef
+POSTGRES_PRISMA_URL=postgres://postgres:123456@localhost:5433/pantry-chef
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=123456
 POSTGRES_DB='pantry-chef'
 
 # Redis
-REDIS_URI=redis://localhost:6379
+REDIS_URL=redis://localhost:6379
 REDIS_PASSWORD=password
 SESSION_FOLDER=pantry-chef:sess:
 
@@ -302,13 +310,13 @@ bun run db:reset       # Сброс БД (migrate reset)
 
 ## Структура AI-промптов
 
-| Промпт | Назначение | Статус |
-|---|---|---|
-| `RECIPE_SYSTEM_PROMPT` | Системный промпт для генерации рецептов | Готов |
-| `VISION_SYSTEM_PROMPT` | Распознавание продуктов на фото | Готов |
-| `MEAL_PLAN_SYSTEM_PROMPT` | Планирование питания на N дней | Готов |
-| `SHOPPING_LIST_SYSTEM_PROMPT` | Составление списка покупок | Готов |
-| `EXPIRY_ALERT_PROMPT` | Алерты об истекающих сроках | Готов |
-| `FALLBACK_SYSTEM_PROMPT` | Запасной промпт при ошибках LLM | Готов |
+| Промпт                        | Назначение                              | Статус |
+| ----------------------------- | --------------------------------------- | ------ |
+| `RECIPE_SYSTEM_PROMPT`        | Системный промпт для генерации рецептов | Готов  |
+| `VISION_SYSTEM_PROMPT`        | Распознавание продуктов на фото         | Готов  |
+| `MEAL_PLAN_SYSTEM_PROMPT`     | Планирование питания на N дней          | Готов  |
+| `SHOPPING_LIST_SYSTEM_PROMPT` | Составление списка покупок              | Готов  |
+| `EXPIRY_ALERT_PROMPT`         | Алерты об истекающих сроках             | Готов  |
+| `FALLBACK_SYSTEM_PROMPT`      | Запасной промпт при ошибках LLM         | Готов  |
 
 Билдеры (tagged template): `buildRecipeUserPrompt`, `buildMealPlanUserPrompt`, `buildShoppingListUserPrompt`, `buildExpiryAlertUserPrompt`.

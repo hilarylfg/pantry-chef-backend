@@ -9,7 +9,7 @@ import {
 
 const prisma = new PrismaClient({
 	adapter: new PrismaPg({
-		connectionString: process.env.DATABASE_URL
+		connectionString: process.env.POSTGRES_PRISMA_URL
 	})
 })
 
@@ -340,32 +340,32 @@ async function seedRecipes() {
 				{
 					name: 'Спагетти',
 					amount: 200,
-					unit: 'g',
+					unit: 'g'
 				},
 				{
 					name: 'Куриная грудка',
 					amount: 250,
-					unit: 'g',
+					unit: 'g'
 				},
 				{
 					name: 'Помидоры',
 					amount: 3,
-					unit: 'piece',
+					unit: 'piece'
 				},
 				{
 					name: 'Чеснок',
 					amount: 2,
-					unit: 'piece',
+					unit: 'piece'
 				},
 				{
 					name: 'Оливковое масло Extra Virgin',
 					amount: 2,
-					unit: 'tbsp',
+					unit: 'tbsp'
 				},
 				{
 					name: 'Соль морская',
 					amount: 1,
-					unit: 'tsp',
+					unit: 'tsp'
 				},
 				{
 					name: 'Базилик свежий',
@@ -426,27 +426,27 @@ async function seedRecipes() {
 				{
 					name: 'Яйца С0',
 					amount: 3,
-					unit: 'piece',
+					unit: 'piece'
 				},
 				{
 					name: 'Молоко 3.2%',
 					amount: 50,
-					unit: 'ml',
+					unit: 'ml'
 				},
 				{
 					name: 'Сыр Гауда',
 					amount: 50,
-					unit: 'g',
+					unit: 'g'
 				},
 				{
 					name: 'Сливочное масло',
 					amount: 10,
-					unit: 'g',
+					unit: 'g'
 				},
 				{
 					name: 'Соль морская',
 					amount: 1,
-					unit: 'pinch',
+					unit: 'pinch'
 				}
 			],
 			steps: [
@@ -496,27 +496,27 @@ async function seedRecipes() {
 				{
 					name: 'Гречка',
 					amount: 200,
-					unit: 'g',
+					unit: 'g'
 				},
 				{
 					name: 'Говяжий фарш',
 					amount: 300,
-					unit: 'g',
+					unit: 'g'
 				},
 				{
 					name: 'Лук репчатый',
 					amount: 1,
-					unit: 'piece',
+					unit: 'piece'
 				},
 				{
 					name: 'Оливковое масло Extra Virgin',
 					amount: 2,
-					unit: 'tbsp',
+					unit: 'tbsp'
 				},
 				{
 					name: 'Чёрный перец молотый',
 					amount: 1,
-					unit: 'pinch',
+					unit: 'pinch'
 				}
 			],
 			steps: [
