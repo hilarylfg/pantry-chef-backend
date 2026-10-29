@@ -2,11 +2,11 @@
 	"$schema": "https://openapi.vercel.sh/vercel.json",
 	"buildCommand": "prisma generate && prisma db push && nest build",
 	"functions": {
-		"dist/src/main.js": {
+		"api/index.ts": {
 			"maxDuration": 60
 		}
 	},
 	"rewrites": [
-		{ "source": "/(.*)", "destination": "/dist/src/main.js" }
+		{ "source": "/(.*)", "destination": "/api/index" }
 	]
 }
